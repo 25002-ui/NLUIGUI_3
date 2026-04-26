@@ -102,47 +102,47 @@ function PromptImage({ src, alt }) {
 
 function InputLauncher({ onClick }) {
   return (
-    <button className="bottom-input-box" type="button" onClick={onClick}>
-      <span>文章を入力</span>
-    </button>
+    <div className="screen-footer">
+      <button className="bottom-input-box" type="button" onClick={onClick}>
+        <span>文章を入力</span>
+      </button>
+    </div>
   )
 }
 
 function InputComposer({ value, onChange, onSend }) {
-  const handleFocus = () => {
-    window.requestAnimationFrame(() => {
-      window.scrollTo(0, 0)
-    })
-  }
-
   return (
-    <div className="bottom-input-row">
-      <input
-        className="bottom-input-field"
-        type="text"
-        placeholder="文章を入力"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        onFocus={handleFocus}
-      />
-      <button className="send-button" type="button" onClick={onSend} aria-label="送信">
-        <img src={iconSend} alt="" />
-      </button>
+    <div className="screen-footer">
+      <div className="bottom-input-row">
+        <input
+          className="bottom-input-field"
+          type="text"
+          placeholder="文章を入力"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          autoFocus
+        />
+        <button className="send-button" type="button" onClick={onSend} aria-label="送信">
+          <img src={iconSend} alt="" />
+        </button>
+      </div>
     </div>
   )
 }
 
 function RoundActionButton({ icon, alt, backgroundColor, onClick }) {
   return (
-    <button
-      className="round-action-button"
-      type="button"
-      onClick={onClick}
-      style={{ backgroundColor }}
-      aria-label={alt}
-    >
-      <img src={icon} alt="" />
-    </button>
+    <div className="screen-footer">
+      <button
+        className="round-action-button"
+        type="button"
+        onClick={onClick}
+        style={{ backgroundColor }}
+        aria-label={alt}
+      >
+        <img src={icon} alt="" />
+      </button>
+    </div>
   )
 }
 
@@ -162,7 +162,7 @@ function PromptScreen({
         {description ? <p className="screen-description">{description}</p> : null}
         <PromptImage src={image} alt={imageAlt} />
       </section>
-      <div className="screen-footer">{footer}</div>
+      {footer}
     </ScreenLayout>
   )
 }
@@ -181,7 +181,7 @@ function TextOnlyScreen({
         <p className="screen-description">{description}</p>
         {body ? <div className="screen-body-copy">{body}</div> : null}
       </section>
-      <div className="screen-footer">{footer}</div>
+      {footer}
     </ScreenLayout>
   )
 }
@@ -202,26 +202,15 @@ function App() {
   const soundcheckAudioRef = useRef(null)
   const outputSoundAudioRef = useRef(null)
 
-  // ログを記録するヘルパー関数
   const recordLog = (actionName, screenName = currentScreen, buttonName = '', inputText = '') => {
-    if (isTestMode) {
-      return // テストモード中はログを記録しない
-    }
-
-    addLog({
-      subjectName,
-      screenName,
-      actionName,
-      buttonName,
-      inputText,
-    })
+    if (isTestMode) return
+    addLog({ subjectName, screenName, actionName, buttonName, inputText })
   }
 
   const handleStartExperiment = (name) => {
     setSubjectName(name)
     setIsTestMode(false)
     setIsExperimentStarted(true)
-    // 実験開始をログに記録
     addLog({
       subjectName: name,
       screenName: 'SubjectNameInput',
@@ -235,30 +224,19 @@ function App() {
     setIsTestMode(true)
     setIsExperimentStarted(true)
     setCurrentScreen('home')
-    // テストモードではログを記録しない
   }
 
   const navigateTo = (screenName) => {
-    if (screenName === 'practice_sound_1') {
-      setIsPracticeMicActive(false)
-    }
-
-    // 画面遷移をログに記録
+    if (screenName === 'practice_sound_1') setIsPracticeMicActive(false)
     recordLog('画面遷移', screenName, screenName, '')
-
     setScreenHistory((history) => [...history, currentScreen])
     setCurrentScreen(screenName)
   }
 
   const goBack = () => {
-    // 戻るボタン押下をログに記録
     recordLog('戻るボタン押下')
-
     setScreenHistory((history) => {
-      if (history.length === 0) {
-        return history
-      }
-
+      if (history.length === 0) return history
       const nextHistory = history.slice(0, -1)
       setCurrentScreen(history[history.length - 1])
       return nextHistory
@@ -266,18 +244,13 @@ function App() {
   }
 
   const goHome = () => {
-    // Homeボタン押下をログに記録
     recordLog('Homeボタン押下')
-
     setCurrentScreen('home')
     setScreenHistory([])
   }
 
   const stopSoundcheckAudio = () => {
-    if (!soundcheckAudioRef.current) {
-      return
-    }
-
+    if (!soundcheckAudioRef.current) return
     soundcheckAudioRef.current.pause()
     soundcheckAudioRef.current.currentTime = 0
     soundcheckAudioRef.current = null
@@ -291,30 +264,23 @@ function App() {
       outputSoundAudioRef.current.onerror = null
       outputSoundAudioRef.current = null
     }
-
     setIsOutputSoundPlaying(false)
   }
 
   useEffect(() => {
-    if (!window.visualViewport) {
-      return undefined
+    const updateOffset = () => {
+      if (!window.visualViewport) return
+      const offset = window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop
+      document.documentElement.style.setProperty('--keyboard-inset', `${Math.max(0, offset)}px`)
     }
 
-    const updateKeyboardInset = () => {
-      const inset = Math.max(
-        0,
-        window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop,
-      )
-      document.documentElement.style.setProperty('--keyboard-inset', `${inset}px`)
-    }
-
-    updateKeyboardInset()
-    window.visualViewport.addEventListener('resize', updateKeyboardInset)
-    window.visualViewport.addEventListener('scroll', updateKeyboardInset)
+    window.visualViewport?.addEventListener('resize', updateOffset)
+    window.visualViewport?.addEventListener('scroll', updateOffset)
+    updateOffset()
 
     return () => {
-      window.visualViewport.removeEventListener('resize', updateKeyboardInset)
-      window.visualViewport.removeEventListener('scroll', updateKeyboardInset)
+      window.visualViewport?.removeEventListener('resize', updateOffset)
+      window.visualViewport?.removeEventListener('scroll', updateOffset)
     }
   }, [])
 
@@ -323,19 +289,14 @@ function App() {
       stopSoundcheckAudio()
       return undefined
     }
-
-    // soundcheck 画面表示をログに記録
     recordLog('画面表示', 'soundcheck')
-
     const audio = new Audio(soundcheckAudioFile)
     audio.loop = true
     soundcheckAudioRef.current = audio
     audio.play().catch(() => {})
-
     return () => {
-      if (soundcheckAudioRef.current === audio) {
-        stopSoundcheckAudio()
-      } else {
+      if (soundcheckAudioRef.current === audio) stopSoundcheckAudio()
+      else {
         audio.pause()
         audio.currentTime = 0
       }
@@ -343,83 +304,57 @@ function App() {
   }, [currentScreen])
 
   useEffect(() => {
-    if (currentScreen === 'output_sound_1') {
-      return undefined
-    }
-
+    if (currentScreen === 'output_sound_1') return undefined
     stopOutputSoundAudio()
     return undefined
   }, [currentScreen])
 
   useEffect(() => {
-    // output_text_1 画面表示をログに記録
-    if (currentScreen === 'output_text_1') {
-      recordLog('画面表示', 'output_text_1')
-    }
+    if (currentScreen === 'output_text_1') recordLog('画面表示', 'output_text_1')
   }, [currentScreen])
 
   const replaySoundcheck = () => {
-    if (!soundcheckAudioRef.current) {
-      return
-    }
-
-    // soundcheck 再生ボタン押下をログに記録
+    if (!soundcheckAudioRef.current) return
     recordLog('音声再生開始', 'soundcheck', '再生ボタン', '')
-
     soundcheckAudioRef.current.currentTime = 0
     soundcheckAudioRef.current.play().catch(() => {})
   }
 
   const playOutputSound = () => {
-    if (isOutputSoundPlaying) {
-      return
-    }
-
+    if (isOutputSoundPlaying) return
     stopOutputSoundAudio()
-
     const audio = new Audio(outputSoundAudioFile)
     outputSoundAudioRef.current = audio
     setIsOutputSoundPlaying(true)
-
-    // 音声再生開始をログに記録
     recordLog('音声再生開始', 'output_sound_1', '再生ボタン', '')
-
     const finishPlayback = () => {
-      if (outputSoundAudioRef.current === audio) {
-        outputSoundAudioRef.current = null
-      }
-      // 音声再生終了をログに記録
+      if (outputSoundAudioRef.current === audio) outputSoundAudioRef.current = null
       recordLog('音声再生終了', 'output_sound_1', '', '')
       setIsOutputSoundPlaying(false)
     }
-
     audio.onended = finishPlayback
     audio.onerror = finishPlayback
     audio.play().catch(finishPlayback)
   }
 
   const handlePracticeTextSend = () => {
-    // practice_text_2 送信ボタン押下をログに記録
     recordLog('送信ボタン押下', 'practice_text_2', '送信', practiceTextValue)
     setPracticeTextValue('')
     goBack()
   }
 
   const handleInputTextSend = () => {
-    // input_text_2 送信ボタン押下をログに記録
     recordLog('送信ボタン押下', 'input_text_2', '送信', inputTextValue)
     setInputTextValue('')
     goBack()
   }
 
   const handlePracticeTextBoxClick = () => {
-    // practice_text_1 テキストボックス押下をログに記録
     recordLog('テキストボックス押下', 'practice_text_1', 'テキストボックス', '')
     navigateTo('practice_text_2')
   }
 
   const handleInputTextBoxClick = () => {
-    // input_text_1 テキストボックス押下をログに記録
     recordLog('テキストボックス押下', 'input_text_1', 'テキストボックス', '')
     navigateTo('input_text_2')
   }
@@ -427,25 +362,17 @@ function App() {
   const handlePracticeMicToggle = () => {
     const newState = !isPracticeMicActive
     setIsPracticeMicActive(newState)
-
-    // マイク ON/OFF をログに記録
-    const actionName = newState ? 'マイク開始' : 'マイク停止'
-    recordLog(actionName, 'practice_sound_1', 'マイクボタン', '')
+    recordLog(newState ? 'マイク開始' : 'マイク停止', 'practice_sound_1', 'マイクボタン', '')
   }
 
   const handleInputMicToggle = () => {
     const newState = !isInputMicActive
     setIsInputMicActive(newState)
-
-    // マイク ON/OFF をログに記録
-    const actionName = newState ? 'マイク開始' : 'マイク停止'
-    recordLog(actionName, 'input_sound_1', 'マイクボタン', '')
+    recordLog(newState ? 'マイク開始' : 'マイク停止', 'input_sound_1', 'マイクボタン', '')
   }
 
   const handleOutputTextCheckToggle = () => {
     setIsOutputTextChecked(!isOutputTextChecked)
-
-    // チェックボタン押下をログに記録
     recordLog('チェックボタン押下', 'output_text_1', 'チェック', '')
   }
 
@@ -460,9 +387,7 @@ function App() {
     }
 
     switch (currentScreen) {
-      case 'home':
-        return <HomeScreen onNavigate={navigateTo} />
-
+      case 'home': return <HomeScreen onNavigate={navigateTo} />
       case 'practice_text_1':
         return (
           <PromptScreen
@@ -475,7 +400,6 @@ function App() {
             footer={<InputLauncher onClick={handlePracticeTextBoxClick} />}
           />
         )
-
       case 'practice_text_2':
         return (
           <PromptScreen
@@ -495,7 +419,6 @@ function App() {
             }
           />
         )
-
       case 'input_text_1':
         return (
           <PromptScreen
@@ -508,7 +431,6 @@ function App() {
             footer={<InputLauncher onClick={handleInputTextBoxClick} />}
           />
         )
-
       case 'input_text_2':
         return (
           <PromptScreen
@@ -528,7 +450,6 @@ function App() {
             }
           />
         )
-
       case 'practice_sound_1':
         return (
           <PromptScreen
@@ -548,7 +469,6 @@ function App() {
             }
           />
         )
-
       case 'input_sound_1':
         return (
           <PromptScreen
@@ -568,7 +488,6 @@ function App() {
             }
           />
         )
-
       case 'output_text_1':
         return (
           <PromptScreen
@@ -587,7 +506,6 @@ function App() {
             }
           />
         )
-
       case 'soundcheck':
         return (
           <TextOnlyScreen
@@ -606,7 +524,6 @@ function App() {
             }
           />
         )
-
       case 'output_sound_1':
         return (
           <TextOnlyScreen
@@ -625,9 +542,7 @@ function App() {
             }
           />
         )
-
-      default:
-        return <HomeScreen onNavigate={navigateTo} />
+      default: return <HomeScreen onNavigate={navigateTo} />
     }
   }
 
