@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
+import SubjectNameInput from './components/SubjectNameInput'
 import iconBack from '../material/icon_back.png'
 import iconHome from '../material/icon_home.png'
 import iconSend from '../material/icon_send.png'
@@ -14,13 +15,20 @@ import inputTextImage from '../material/input_text.png'
 import outputTextImage from '../material/output_text.png'
 import soundcheckAudioFile from '../material/soundcheck.mp3'
 import outputSoundAudioFile from '../material/output_sound.mp3'
+import { addLog } from './utils/logger'
 
 const HOME_BUTTONS = [
   { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'peach' },
   { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'peach' },
   { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach', singleLine: true },
   { key: 'input_sound_1', label: ['音声入力'], tone: 'peach', singleLine: true },
-  { key: 'soundcheck', label: ['音声チェック'], tone: 'blue', spacerBefore: true, singleLine: true },
+  {
+    key: 'soundcheck',
+    label: ['音声チェック'],
+    tone: 'blue',
+    spacerBefore: true,
+    singleLine: true,
+  },
   { key: 'output_text_1', label: ['テキスト出力'], tone: 'blue', singleLine: true },
   { key: 'output_sound_1', label: ['音声出力'], tone: 'blue', singleLine: true },
 ]
@@ -179,6 +187,9 @@ function TextOnlyScreen({
 }
 
 function App() {
+  const [isExperimentStarted, setIsExperimentStarted] = useState(false)
+  const [subjectName, setSubjectName] = useState('')
+  const [isTestMode, setIsTestMode] = useState(false)
   const [currentScreen, setCurrentScreen] = useState('home')
   const [screenHistory, setScreenHistory] = useState([])
   const [practiceTextValue, setPracticeTextValue] = useState('')
@@ -191,16 +202,58 @@ function App() {
   const soundcheckAudioRef = useRef(null)
   const outputSoundAudioRef = useRef(null)
 
+  // ログを記録するヘルパー関数
+  const recordLog = (actionName, screenName = currentScreen, buttonName = '', inputText = '') => {
+    if (isTestMode) {
+      return // テストモード中はログを記録しない
+    }
+
+    addLog({
+      subjectName,
+      screenName,
+      actionName,
+      buttonName,
+      inputText,
+    })
+  }
+
+  const handleStartExperiment = (name) => {
+    setSubjectName(name)
+    setIsTestMode(false)
+    setIsExperimentStarted(true)
+    // 実験開始をログに記録
+    addLog({
+      subjectName: name,
+      screenName: 'SubjectNameInput',
+      actionName: '実験開始',
+      buttonName: '開始',
+      inputText: '',
+    })
+  }
+
+  const handleStartTestMode = () => {
+    setIsTestMode(true)
+    setIsExperimentStarted(true)
+    setCurrentScreen('home')
+    // テストモードではログを記録しない
+  }
+
   const navigateTo = (screenName) => {
     if (screenName === 'practice_sound_1') {
       setIsPracticeMicActive(false)
     }
+
+    // 画面遷移をログに記録
+    recordLog('画面遷移', screenName, screenName, '')
 
     setScreenHistory((history) => [...history, currentScreen])
     setCurrentScreen(screenName)
   }
 
   const goBack = () => {
+    // 戻るボタン押下をログに記録
+    recordLog('戻るボタン押下')
+
     setScreenHistory((history) => {
       if (history.length === 0) {
         return history
@@ -213,6 +266,9 @@ function App() {
   }
 
   const goHome = () => {
+    // Homeボタン押下をログに記録
+    recordLog('Homeボタン押下')
+
     setCurrentScreen('home')
     setScreenHistory([])
   }
@@ -268,6 +324,9 @@ function App() {
       return undefined
     }
 
+    // soundcheck 画面表示をログに記録
+    recordLog('画面表示', 'soundcheck')
+
     const audio = new Audio(soundcheckAudioFile)
     audio.loop = true
     soundcheckAudioRef.current = audio
@@ -292,10 +351,20 @@ function App() {
     return undefined
   }, [currentScreen])
 
+  useEffect(() => {
+    // output_text_1 画面表示をログに記録
+    if (currentScreen === 'output_text_1') {
+      recordLog('画面表示', 'output_text_1')
+    }
+  }, [currentScreen])
+
   const replaySoundcheck = () => {
     if (!soundcheckAudioRef.current) {
       return
     }
+
+    // soundcheck 再生ボタン押下をログに記録
+    recordLog('音声再生開始', 'soundcheck', '再生ボタン', '')
 
     soundcheckAudioRef.current.currentTime = 0
     soundcheckAudioRef.current.play().catch(() => {})
@@ -312,10 +381,15 @@ function App() {
     outputSoundAudioRef.current = audio
     setIsOutputSoundPlaying(true)
 
+    // 音声再生開始をログに記録
+    recordLog('音声再生開始', 'output_sound_1', '再生ボタン', '')
+
     const finishPlayback = () => {
       if (outputSoundAudioRef.current === audio) {
         outputSoundAudioRef.current = null
       }
+      // 音声再生終了をログに記録
+      recordLog('音声再生終了', 'output_sound_1', '', '')
       setIsOutputSoundPlaying(false)
     }
 
@@ -325,16 +399,66 @@ function App() {
   }
 
   const handlePracticeTextSend = () => {
+    // practice_text_2 送信ボタン押下をログに記録
+    recordLog('送信ボタン押下', 'practice_text_2', '送信', practiceTextValue)
     setPracticeTextValue('')
     goBack()
   }
 
   const handleInputTextSend = () => {
+    // input_text_2 送信ボタン押下をログに記録
+    recordLog('送信ボタン押下', 'input_text_2', '送信', inputTextValue)
     setInputTextValue('')
     goBack()
   }
 
+  const handlePracticeTextBoxClick = () => {
+    // practice_text_1 テキストボックス押下をログに記録
+    recordLog('テキストボックス押下', 'practice_text_1', 'テキストボックス', '')
+    navigateTo('practice_text_2')
+  }
+
+  const handleInputTextBoxClick = () => {
+    // input_text_1 テキストボックス押下をログに記録
+    recordLog('テキストボックス押下', 'input_text_1', 'テキストボックス', '')
+    navigateTo('input_text_2')
+  }
+
+  const handlePracticeMicToggle = () => {
+    const newState = !isPracticeMicActive
+    setIsPracticeMicActive(newState)
+
+    // マイク ON/OFF をログに記録
+    const actionName = newState ? 'マイク開始' : 'マイク停止'
+    recordLog(actionName, 'practice_sound_1', 'マイクボタン', '')
+  }
+
+  const handleInputMicToggle = () => {
+    const newState = !isInputMicActive
+    setIsInputMicActive(newState)
+
+    // マイク ON/OFF をログに記録
+    const actionName = newState ? 'マイク開始' : 'マイク停止'
+    recordLog(actionName, 'input_sound_1', 'マイクボタン', '')
+  }
+
+  const handleOutputTextCheckToggle = () => {
+    setIsOutputTextChecked(!isOutputTextChecked)
+
+    // チェックボタン押下をログに記録
+    recordLog('チェックボタン押下', 'output_text_1', 'チェック', '')
+  }
+
   const renderScreen = () => {
+    if (!isExperimentStarted) {
+      return (
+        <SubjectNameInput
+          onStartExperiment={handleStartExperiment}
+          onStartTestMode={handleStartTestMode}
+        />
+      )
+    }
+
     switch (currentScreen) {
       case 'home':
         return <HomeScreen onNavigate={navigateTo} />
@@ -348,7 +472,7 @@ function App() {
             imageAlt="練習テキスト入力の説明"
             onBack={goBack}
             onHome={goHome}
-            footer={<InputLauncher onClick={() => navigateTo('practice_text_2')} />}
+            footer={<InputLauncher onClick={handlePracticeTextBoxClick} />}
           />
         )
 
@@ -381,7 +505,7 @@ function App() {
             imageAlt="テキスト入力の説明"
             onBack={goBack}
             onHome={goHome}
-            footer={<InputLauncher onClick={() => navigateTo('input_text_2')} />}
+            footer={<InputLauncher onClick={handleInputTextBoxClick} />}
           />
         )
 
@@ -419,7 +543,7 @@ function App() {
                 icon={isPracticeMicActive ? iconMic : iconMute}
                 alt="練習音声入力"
                 backgroundColor="#F4F4F4"
-                onClick={() => setIsPracticeMicActive((active) => !active)}
+                onClick={handlePracticeMicToggle}
               />
             }
           />
@@ -439,7 +563,7 @@ function App() {
                 icon={isInputMicActive ? iconMic : iconMute}
                 alt="音声入力"
                 backgroundColor={isInputMicActive ? '#F4F4F4' : '#E5E5E5'}
-                onClick={() => setIsInputMicActive((active) => !active)}
+                onClick={handleInputMicToggle}
               />
             }
           />
@@ -458,7 +582,7 @@ function App() {
                 icon={isOutputTextChecked ? iconCheckWhite : iconCheckBlack}
                 alt="テキスト出力確認"
                 backgroundColor={isOutputTextChecked ? '#FA6400' : '#F4F4F4'}
-                onClick={() => setIsOutputTextChecked((checked) => !checked)}
+                onClick={handleOutputTextCheckToggle}
               />
             }
           />
