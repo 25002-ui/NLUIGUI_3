@@ -4,6 +4,10 @@
   font-weight: 400 700;
 }
 
+:root {
+  --keyboard-inset: 0px;
+}
+
 .app-shell {
   width: 100%;
   min-height: 100svh;
@@ -22,6 +26,7 @@
     clamp(1.35rem, 4.8vh, 2.05rem);
   display: flex;
   flex-direction: column;
+  position: relative;
 }
 
 .screen-header {
@@ -259,15 +264,27 @@
 
 .compose-screen .screen-main {
   padding-top: clamp(3rem, 8vh, 4.1rem);
+  padding-bottom: clamp(6.8rem, 13vh, 8rem);
 }
 
 .compose-screen .screen-footer {
-  margin-top: auto;
+  margin-top: 0;
   padding-top: 0;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + clamp(0.6rem, 2vh, 1rem));
+  width: min(calc(100vw - 2rem), 398px);
+  z-index: 30;
+  pointer-events: none;
 }
 
 .compose-screen .prompt-image-wrap {
   width: 100%;
+}
+
+.compose-screen .bottom-input-row {
+  pointer-events: auto;
 }
 
 @media (max-width: 360px) {

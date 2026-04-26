@@ -101,6 +101,12 @@ function InputLauncher({ onClick }) {
 }
 
 function InputComposer({ value, onChange, onSend }) {
+  const handleFocus = () => {
+    window.requestAnimationFrame(() => {
+      window.scrollTo(0, 0)
+    })
+  }
+
   return (
     <div className="bottom-input-row">
       <input
@@ -109,6 +115,7 @@ function InputComposer({ value, onChange, onSend }) {
         placeholder="文章を入力"
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onFocus={handleFocus}
       />
       <button className="send-button" type="button" onClick={onSend} aria-label="送信">
         <img src={iconSend} alt="" />
@@ -185,6 +192,10 @@ function App() {
   const outputSoundAudioRef = useRef(null)
 
   const navigateTo = (screenName) => {
+    if (screenName === 'practice_sound_1') {
+      setIsPracticeMicActive(false)
+    }
+
     setScreenHistory((history) => [...history, currentScreen])
     setCurrentScreen(screenName)
   }
@@ -227,6 +238,29 @@ function App() {
 
     setIsOutputSoundPlaying(false)
   }
+
+  useEffect(() => {
+    if (!window.visualViewport) {
+      return undefined
+    }
+
+    const updateKeyboardInset = () => {
+      const inset = Math.max(
+        0,
+        window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop,
+      )
+      document.documentElement.style.setProperty('--keyboard-inset', `${inset}px`)
+    }
+
+    updateKeyboardInset()
+    window.visualViewport.addEventListener('resize', updateKeyboardInset)
+    window.visualViewport.addEventListener('scroll', updateKeyboardInset)
+
+    return () => {
+      window.visualViewport.removeEventListener('resize', updateKeyboardInset)
+      window.visualViewport.removeEventListener('scroll', updateKeyboardInset)
+    }
+  }, [])
 
   useEffect(() => {
     if (currentScreen !== 'soundcheck') {
