@@ -18,11 +18,11 @@ import outputSoundAudioFile from '../material/output_sound.mp3'
 const HOME_BUTTONS = [
   { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'peach' },
   { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'peach' },
-  { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach' },
-  { key: 'input_sound_1', label: ['音声入力'], tone: 'peach' },
-  { key: 'soundcheck', label: ['音声チェック'], tone: 'blue', spacerBefore: true },
-  { key: 'output_text_1', label: ['テキスト出力'], tone: 'blue' },
-  { key: 'output_sound_1', label: ['音声出力'], tone: 'blue' },
+  { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach', singleLine: true },
+  { key: 'input_sound_1', label: ['音声入力'], tone: 'peach', singleLine: true },
+  { key: 'soundcheck', label: ['音声チェック'], tone: 'blue', spacerBefore: true, singleLine: true },
+  { key: 'output_text_1', label: ['テキスト出力'], tone: 'blue', singleLine: true },
+  { key: 'output_sound_1', label: ['音声出力'], tone: 'blue', singleLine: true },
 ]
 
 const SCREEN_TITLES = {
@@ -51,9 +51,9 @@ function Header({ title, onBack, onHome }) {
   )
 }
 
-function ScreenLayout({ title, onBack, onHome, children }) {
+function ScreenLayout({ title, onBack, onHome, children, className = '' }) {
   return (
-    <div className="screen-shell">
+    <div className={`screen-shell ${className}`.trim()}>
       <Header title={title} onBack={onBack} onHome={onHome} />
       <main className="screen-main">{children}</main>
     </div>
@@ -72,7 +72,7 @@ function HomeScreen({ onNavigate }) {
             type="button"
             onClick={() => onNavigate(button.key)}
           >
-            <span className="home-card-label">
+            <span className={`home-card-label ${button.singleLine ? 'home-card-label-single' : ''}`.trim()}>
               {button.label.map((line) => (
                 <span key={line}>{line}</span>
               ))}
@@ -109,7 +109,6 @@ function InputComposer({ value, onChange, onSend }) {
         placeholder="文章を入力"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        autoFocus
       />
       <button className="send-button" type="button" onClick={onSend} aria-label="送信">
         <img src={iconSend} alt="" />
@@ -134,15 +133,20 @@ function RoundActionButton({ icon, alt, backgroundColor, onClick }) {
 
 function PromptScreen({
   title,
+  description,
   image,
   imageAlt,
   onBack,
   onHome,
   footer,
+  className,
 }) {
   return (
-    <ScreenLayout title={title} onBack={onBack} onHome={onHome}>
-      <PromptImage src={image} alt={imageAlt} />
+    <ScreenLayout title={title} onBack={onBack} onHome={onHome} className={className}>
+      <section className="prompt-stack">
+        {description ? <p className="screen-description">{description}</p> : null}
+        <PromptImage src={image} alt={imageAlt} />
+      </section>
       <div className="screen-footer">{footer}</div>
     </ScreenLayout>
   )
@@ -305,6 +309,7 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.practice_text_1}
+            description="以下の文章をテキスト入力してください。"
             image={practiceTextImage}
             imageAlt="練習テキスト入力の説明"
             onBack={goBack}
@@ -317,10 +322,12 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.practice_text_2}
+            description="以下の文章をテキスト入力してください。"
             image={practiceTextImage}
             imageAlt="練習テキスト入力の説明"
             onBack={goBack}
             onHome={goHome}
+            className="compose-screen"
             footer={
               <InputComposer
                 value={practiceTextValue}
@@ -335,6 +342,7 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.input_text_1}
+            description="以下の文章をテキスト入力してください。"
             image={inputTextImage}
             imageAlt="テキスト入力の説明"
             onBack={goBack}
@@ -347,10 +355,12 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.input_text_2}
+            description="以下の文章をテキスト入力してください。"
             image={inputTextImage}
             imageAlt="テキスト入力の説明"
             onBack={goBack}
             onHome={goHome}
+            className="compose-screen"
             footer={
               <InputComposer
                 value={inputTextValue}
@@ -365,6 +375,7 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.practice_sound_1}
+            description="以下の文章を音声入力してください。"
             image={practiceTextImage}
             imageAlt="練習音声入力の説明"
             onBack={goBack}
@@ -384,6 +395,7 @@ function App() {
         return (
           <PromptScreen
             title={SCREEN_TITLES.input_sound_1}
+            description="以下の文章を音声入力してください。"
             image={inputTextImage}
             imageAlt="音声入力の説明"
             onBack={goBack}
