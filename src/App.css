@@ -2,40 +2,35 @@
 
 :root {
   --primary-color: #007AFF;
-  --bg-color: #f5f5f7;
-  --keyboard-inset: 0px; /* JSから渡されるキーボード高さを反映 */
+  --bg-color: #f2f2f7; /* iOS風の薄いグレー */
+  --keyboard-inset: 0px;
 }
 
 * {
   box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent; /* タップ時の青枠防止 */
+  -webkit-tap-highlight-color: transparent;
 }
 
 body, html, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100dvh; /* 動的ビューポート */
+  height: 100dvh; /* 動的ビューポートで高さを固定 */
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: white;
-  overflow: hidden; /* 画面全体の不要なスクロールを防止 */
+  overflow: hidden; /* 全体のスクロールを禁止 */
 }
 
-.app-shell {
-  width: 100%;
-  height: 100%;
-}
-
-/* 画面全体の縦レイアウトを固定 */
+/* 画面の基本構造 */
 .screen-shell {
   display: flex;
   flex-direction: column;
   height: 100dvh;
   width: 100%;
-  position: relative;
+  background-color: white;
 }
 
-/* 1. ヘッダー：常に上部に固定 */
+/* ヘッダー：常に上部に固定 */
 .screen-header {
   flex: 0 0 auto;
   display: flex;
@@ -43,7 +38,8 @@ body, html, #root {
   justify-content: space-between;
   padding: env(safe-area-inset-top) 16px 10px 16px;
   background-color: #fff;
-  border-bottom: 1px solid #eee;
+  border-bottom: 1px solid #f0f0f0;
+  z-index: 10;
 }
 
 .screen-title {
@@ -52,103 +48,90 @@ body, html, #root {
   margin: 0;
 }
 
-.header-icon-button {
-  background: none;
-  border: none;
-  padding: 8px;
-  cursor: pointer;
-}
-
-.header-icon-button img {
-  width: 24px;
-  height: 24px;
-}
-
-/* 2. メインコンテンツ：ここが可変領域 */
+/* メインコンテンツ：ここが可変領域 */
 .screen-main {
-  flex: 1 1 auto;
+  flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center; /* 常に中央に配置 */
   align-items: center;
-  padding: 20px;
-  overflow: hidden; /* コンテンツが画像を押し出さないようにする */
+  justify-content: center; /* 要素を中央に寄せる */
+  padding: 16px;
+  overflow: hidden; /* 画像がはみ出さないように */
 }
 
+/* 画像とテキストのまとまり */
 .prompt-stack {
   width: 100%;
-  height: 100%;
+  max-width: 500px;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
-  gap: 2vh; /* 画面の高さに合わせて隙間を調整 */
+  gap: 16px;
 }
 
 .screen-description {
-  font-size: 16px;
-  color: #333;
-  font-weight: 500;
+  font-size: 15px;
+  color: #3a3a3c;
+  line-height: 1.4;
+  text-align: center;
   margin: 0;
 }
 
-/* 画像：キーボード表示時に縮小するように設定 */
+/* 画像のコンテナ：ここが「縮む」役割を担う */
 .prompt-image-wrap {
   width: 100%;
-  max-width: 380px;
-  flex: 0 1 auto; /* 縮むことを許可する */
+  flex: 0 1 auto; /* 画面が狭い時に縮むことを許可 */
   display: flex;
   justify-content: center;
+  min-height: 100px; /* 最小限の高さ */
 }
 
 .prompt-image {
   max-width: 100%;
-  max-height: 45vh; /* 通常時は画面の45%まで */
+  max-height: 35vh; /* 通常時は画面の35%まで。キーボード時はこれより小さくなる */
   height: auto;
   object-fit: contain;
-  transition: max-height 0.2s ease-out;
+  border-radius: 12px;
 }
 
-/* 3. フッター：入力エリア */
+/* フッター：入力エリア */
 .screen-footer {
   flex: 0 0 auto;
   padding: 12px 16px;
   padding-bottom: calc(12px + env(safe-area-inset-bottom));
   background-color: #fff;
-  border-top: 1px solid #eee;
+  border-top: 1px solid #f0f0f0;
   
-  /* 重要：キーボード表示時にここだけを持ち上げる */
+  /* 重要：キーボード表示時にこの要素だけを持ち上げる */
   transform: translateY(calc(-1 * var(--keyboard-inset)));
-  transition: transform 0.15s ease-out;
+  transition: transform 0.1s ease-out;
 }
 
-/* ReferenceUIのグレーの入力コンテナを再現 */
+/* グレーの入力コンテナ（ReferenceUIの再現） */
 .bottom-input-box {
   width: 100%;
-  padding: 14px 18px;
+  padding: 12px 16px;
   background-color: #f2f2f7;
-  border: none;
-  border-radius: 24px; /* iOS風の強い角丸 */
-  text-align: left;
-  color: #8e8e93;
-  font-size: 16px;
+  border-radius: 22px;
   display: flex;
   align-items: center;
+  min-height: 44px;
 }
 
 .bottom-input-field {
-  width: 100%;
+  flex: 1;
   background: transparent;
   border: none;
   font-size: 16px;
   outline: none;
+  color: #000;
   padding: 0;
 }
 
 .bottom-input-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 8px;
 }
 
 .send-button {
@@ -157,42 +140,45 @@ body, html, #root {
   padding: 0;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .send-button img {
-  width: 34px;
-  height: 34px;
+  width: 32px;
+  height: 32px;
 }
 
-/* 丸いボタン：音声入力など */
+/* 音声入力などの丸いアクションボタン */
 .round-action-button {
-  width: 72px;
-  height: 72px;
+  width: 68px;
+  height: 68px;
   border-radius: 50%;
   border: none;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  background-color: #000;
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: 0 auto;
+  margin: 10px auto;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-/* Home画面の特殊グリッド */
+/* Home画面のタイル */
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px;
   width: 100%;
 }
 
 .home-card {
-  border-radius: 16px;
-  padding: 20px;
+  border-radius: 14px;
+  padding: 16px;
   aspect-ratio: 1 / 1;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   border: none;
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 700;
+  text-align: left;
 }
