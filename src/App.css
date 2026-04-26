@@ -1,4 +1,5 @@
-/* --- 全体レイアウト --- */
+/* src/App.css (修正前・安定版全文) */
+
 :root {
   --primary-color: #007AFF;
   --bg-color: #f5f5f7;
@@ -16,115 +17,91 @@ body, html, #root {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: white;
-  overflow: hidden; /* 全体のスクロールを禁止 */
 }
 
-/* 画面の基本シェル */
+/* 画面全体のレイアウト */
 .screen-shell {
   display: flex;
   flex-direction: column;
-  height: 100dvh; /* 動的ビューポート：キーボードを考慮 */
+  height: 100vh;
   width: 100%;
   position: relative;
-  background: white;
 }
 
-/* --- コンテンツエリア --- */
+/* メインコンテンツエリア */
 .screen-main {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* コンテンツが多い場合はここだけスクロール */
-  position: relative;
-}
-
-/* 中央の画像やテキストのスタック */
-.prompt-stack {
   flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   padding: 20px;
-  gap: 20px;
   text-align: center;
 }
 
+/* プロンプト画像 */
 .prompt-image-wrap {
   width: 100%;
   max-width: 400px;
-  transition: max-height 0.3s ease;
+  margin-bottom: 24px;
 }
 
 .prompt-image {
   width: 100%;
   height: auto;
   object-fit: contain;
-  border-radius: 8px;
 }
 
-/* テキスト入力画面（PracticeText2, InputText2）専用の調整 */
-/* キーボード表示時に画像を小さくして共存させる */
-.compose-screen .prompt-image-wrap {
-  max-height: 25vh; 
-}
-
+/* プロンプトテキスト */
 .prompt-text {
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   line-height: 1.5;
   color: #333;
-  margin: 0;
 }
 
-/* --- フッター（入力エリア） --- */
+/* 下部入力エリア */
 .screen-footer {
   width: 100%;
-  background: white;
+  padding: 16px;
+  padding-bottom: calc(16px + env(safe-area-inset-bottom));
+  background-color: white;
   border-top: 1px solid #eee;
-  padding: 12px 16px;
-  padding-bottom: calc(12px + env(safe-area-inset-bottom));
   
-  /* キーボードが出たとき、この要素だけを上に持ち上げる */
+  /* キーボード表示時の位置調整用 */
   transform: translateY(calc(-1 * var(--keyboard-inset)));
   transition: transform 0.1s ease-out;
-  z-index: 100;
 }
 
-/* 入力ボックス（グレーの背景） */
+/* グレーの入力コンテナ */
 .input-container {
   display: flex;
-  align-items: flex-end;
-  gap: 10px;
+  align-items: center;
+  gap: 12px;
   background-color: #f0f0f2;
   border-radius: 24px;
-  padding: 8px 12px;
+  padding: 8px 16px;
 }
 
+/* テキスト入力欄 */
 .text-input {
   flex: 1;
   border: none;
   background: transparent;
-  padding: 8px 4px;
-  font-size: 16px; /* iOSの自動ズーム防止 */
-  max-height: 120px;
+  padding: 8px 0;
+  font-size: 16px;
   outline: none;
   resize: none;
 }
 
-/* ボタン類 */
+/* アイコンボタン */
 .icon-btn {
   background: none;
   border: none;
-  padding: 8px;
+  padding: 4px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: opacity 0.2s;
-}
-
-.icon-btn:active {
-  opacity: 0.5;
 }
 
 .icon-img {
@@ -132,12 +109,12 @@ body, html, #root {
   height: 24px;
 }
 
-/* --- ユーティリティ --- */
+/* 非表示設定 */
 .hidden {
   display: none;
 }
 
-/* 被験者入力画面などの特殊レイアウト */
+/* セットアップ画面（被験者名入力など）用 */
 .setup-container {
   display: flex;
   flex-direction: column;
