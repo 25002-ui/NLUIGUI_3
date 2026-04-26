@@ -7,7 +7,7 @@ const SESSION_START_TIME = Date.now()
 
 // --- 【重要】ここを書き換えてください ---
 // 先ほど発行された「ウェブアプリ URL」をこの中に入れます
-const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbya8Kdhl1MmPMbJVs27MzX4aTOhZEvntoRmWbtTLFCj7A7Ov1duqo6GBsgfRR_7KztC/exec' 
+const GAS_WEBAPP_URL = 'https://script.google.com/macros/s/AKfycbwC8gpKC0qvrV9ii09ueaGZAwC5i_qRnxttFZxcZVF0u1P3VgVGB657Nhw45eQeROCC/exec' 
 
 /**
  * デバイス情報を取得する
