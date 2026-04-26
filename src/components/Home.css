@@ -1,0 +1,125 @@
+.home-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: #ffffff;
+  padding: 16px;
+  font-family: 'Noto Sans CJK JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.home-wrapper {
+  width: 100%;
+  max-width: 430px;
+  background-color: #ffffff;
+  padding: 40px 20px;
+  border-radius: 0;
+  box-sizing: border-box;
+}
+
+.home-title {
+  text-align: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: #000;
+  margin: 0 0 60px 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+.buttons-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  width: 100%;
+}
+
+.home-button {
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 600;
+  transition: transform 0.2s, box-shadow 0.2s;
+  padding: 0;
+  font-family: 'Noto Sans JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  min-height: 100px;
+}
+
+.home-button:active {
+  transform: scale(0.95);
+}
+
+.home-button:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.button-text {
+  text-align: center;
+  line-height: 1.4;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+/* Peach/Beige color for practice and input buttons */
+.peach-button {
+  background-color: #e8cfc8;
+  color: #333;
+}
+
+.peach-button:active {
+  background-color: #ddc0b5;
+}
+
+/* Blue color for output and check buttons */
+.blue-button {
+  background-color: #b8d4f1;
+  color: #333;
+}
+
+.blue-button:active {
+  background-color: #a0c5e8;
+}
+
+/* Center the check button */
+.check-button {
+  grid-column: 1 / -1;
+  width: 50%;
+  margin: 0 auto;
+  aspect-ratio: auto;
+  min-height: 100px;
+  height: auto;
+  padding: 20px;
+}
+
+/* Responsive design for larger screens */
+@media (min-width: 431px) {
+  .home-wrapper {
+    max-width: 430px;
+  }
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 380px) {
+  .home-wrapper {
+    padding: 30px 16px;
+  }
+
+  .home-title {
+    font-size: 28px;
+    margin-bottom: 40px;
+  }
+
+  .buttons-grid {
+    gap: 12px;
+  }
+
+  .home-button {
+    font-size: 14px;
+    border-radius: 12px;
+    min-height: 80px;
+  }
+}
