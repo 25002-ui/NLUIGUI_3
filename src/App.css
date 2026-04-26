@@ -1,11 +1,12 @@
 @font-face {
   font-family: 'Noto Sans CJK JP';
-  src: local('Noto Sans CJK JP'), local('Noto Sans JP');
+  src: local('Noto Sans JP'), sans-serif;
   font-weight: 400 700;
 }
 
 :root {
-  --keyboard-inset: 0px;
+  --keyboard-height: 0px;
+  --vv-offset-top: 0px;
 }
 
 * {
@@ -17,42 +18,42 @@ body, html, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100svh;
-  font-family: 'Noto Sans CJK JP', sans-serif;
+  height: 100%;
+  overflow: hidden; /* ブラウザ独自の押し上げスクロールを無効化 */
   background: #ffffff;
-  overflow: hidden; /* 画面全体の押し上げを防止 */
+  font-family: 'Noto Sans CJK JP', sans-serif;
 }
 
 .app-shell {
   width: 100%;
-  height: 100svh;
+  height: 100dvh;
   display: flex;
   justify-content: center;
 }
 
 .screen-shell {
   width: min(100%, 430px);
-  height: 100svh;
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   position: relative;
-  background: #fff;
 }
 
 /* ヘッダー */
 .screen-header {
-  height: 70px;
+  flex: 0 0 auto;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 20px;
+  padding: 0 16px;
   background: #fff;
   z-index: 100;
 }
 
 .screen-title {
-  font-size: 1.4rem;
-  font-weight: 500;
+  font-size: 1.1rem;
+  font-weight: 700;
   margin: 0;
 }
 
@@ -60,117 +61,121 @@ body, html, #root {
   background: #e4e4e4;
   border: none;
   border-radius: 50%;
-  width: 45px;
-  height: 45px;
-  display: grid;
-  place-items: center;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
 }
 
 .header-icon-button img {
-  width: 24px;
+  width: 20px;
 }
 
-/* メインコンテンツ（画像・説明文）は固定 */
+/* メイン領域：画像と説明文を固定 */
 .screen-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 20px;
+  padding: 24px 16px;
   align-items: center;
-}
-
-.prompt-stack {
-  display: flex;
-  flex-direction: column;
-  gap: 20px;
-  width: 100%;
-}
-
-.prompt-image-wrap {
-  width: 100%;
-}
-
-.prompt-image {
-  width: 100%;
-  height: auto;
-  display: block;
+  overflow: hidden;
 }
 
 .screen-description {
-  font-size: 1.1rem;
+  font-size: 0.95rem;
+  margin: 0 0 20px 0;
   text-align: center;
   color: #000;
 }
 
-/* --- 入力エリアの絶対制御 --- */
-.screen-footer {
+.prompt-image-wrap {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.prompt-image {
+  width: 100%;
+  max-width: 380px;
+  height: auto;
+  object-fit: contain;
+}
+
+/* 入力エリア：Visual Viewportに基づいて浮かせる */
+.input-area-container {
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
-  width: min(90vw, 380px);
-  /* キーボードの高さ + 余白分だけ浮かせる */
-  bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + 20px);
+  width: min(92vw, 390px);
+  
+  /* 魔法の計算：(キーボードの高さ) + (ビューポートのズレ) + (余白) */
+  bottom: calc(var(--keyboard-height) + var(--vv-offset-top) + 20px);
+  
   z-index: 200;
   transition: bottom 0.1s ease-out;
 }
 
-/* 入力ボックスのデザイン */
-.bottom-input-box,
+.bottom-input-box, 
 .bottom-input-row {
   width: 100%;
+  height: 56px;
   background: #e5e5e5;
-  border-radius: 1.5rem;
-  min-height: 60px;
+  border-radius: 16px;
   display: flex;
   align-items: center;
-  padding: 0 20px;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+  padding: 0 16px;
+  border: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.bottom-input-box span {
+.bottom-input-box {
   color: #888;
-  font-size: 1.1rem;
+  font-size: 1rem;
+  text-align: left;
 }
 
 .bottom-input-field {
   flex: 1;
   background: transparent;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1rem;
   outline: none;
+  color: #000;
 }
 
 .send-button {
   background: transparent;
   border: none;
-  padding: 0;
-  display: grid;
-  place-items: center;
+  padding: 4px;
+  display: flex;
+  cursor: pointer;
 }
 
 .send-button img {
-  width: 32px;
+  width: 28px;
 }
 
-/* ホーム画面など */
+/* Home画面 */
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 15px;
-  width: 100%;
-  margin-top: 20px;
+  gap: 12px;
+  padding: 20px;
 }
 
 .home-card {
-  height: 120px;
+  height: 110px;
   border: none;
-  border-radius: 1rem;
-  padding: 15px;
+  border-radius: 12px;
+  padding: 16px;
+  font-weight: bold;
   display: flex;
   align-items: flex-end;
-  font-weight: 600;
-  font-size: 1rem;
+  text-align: left;
 }
 
-.home-card-peach { background: #f9d9bf; }
-.home-card-blue { background: #bcd3f3; }
+.home-card.peach { background: #fbd9c0; }
+.home-card.blue { background: #bcd3f3; }
+.home-card.offset { grid-column: 1; }
