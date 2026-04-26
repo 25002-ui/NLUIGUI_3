@@ -1,3 +1,5 @@
+/* --- 緻密なスケーリングとキーボード対応を兼ね備えた完全修正版 --- */
+
 @font-face {
   font-family: 'Noto Sans CJK JP';
   src: local('Noto Sans CJK JP'), local('Noto Sans JP');
@@ -6,6 +8,21 @@
 
 :root {
   --keyboard-inset: 0px;
+}
+
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body, html, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100svh;
+  font-family: 'Noto Sans CJK JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #ffffff;
+  overflow-x: hidden;
 }
 
 .app-shell {
@@ -19,21 +36,22 @@
 .screen-shell {
   width: min(100%, 430px);
   min-height: 100svh;
-  box-sizing: border-box;
-  padding:
-    clamp(1.35rem, 4.3vw, 2.05rem)
-    clamp(1rem, 4.3vw, 1.45rem)
+  padding: 
+    clamp(1.35rem, 4.3vw, 2.05rem) 
+    clamp(1rem, 4.3vw, 1.45rem) 
     clamp(1.35rem, 4.8vh, 2.05rem);
   display: flex;
   flex-direction: column;
   position: relative;
 }
 
+/* ヘッダーセクション */
 .screen-header {
   display: grid;
   grid-template-columns: clamp(3rem, 10.6vw, 3.45rem) 1fr clamp(3rem, 10.6vw, 3.45rem);
   align-items: center;
   column-gap: clamp(0.45rem, 1.5vw, 0.72rem);
+  flex: 0 0 auto;
 }
 
 .header-icon-button {
@@ -64,11 +82,12 @@
   white-space: nowrap;
 }
 
+/* メインコンテンツセクション */
 .screen-main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-top: clamp(3.2rem, 8.7vh, 5rem);
+  padding-top: clamp(2rem, 5vh, 4rem);
 }
 
 .prompt-stack,
@@ -76,25 +95,21 @@
 .text-content-block {
   width: 100%;
   padding-inline: clamp(0.12rem, 0.5vw, 0.22rem);
-  box-sizing: border-box;
 }
 
 .prompt-stack {
   display: flex;
   flex-direction: column;
   gap: clamp(1.35rem, 3.8vh, 2rem);
+  align-items: center;
 }
 
 .prompt-image {
   width: 100%;
+  max-width: 100%;
   height: auto;
   display: block;
-}
-
-.text-content-block {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(2rem, 4vh, 2.8rem);
+  object-fit: contain;
 }
 
 .screen-description,
@@ -104,21 +119,19 @@
   line-height: 1.58;
   font-weight: 400;
   color: #000000;
+  text-align: center;
 }
 
-.screen-body-copy {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2em;
-}
-
+/* フッターセクション（通常時） */
 .screen-footer {
   margin-top: auto;
   padding-top: clamp(1.5rem, 4.8vh, 2.25rem);
   display: flex;
   justify-content: center;
+  flex: 0 0 auto;
 }
 
+/* 入力欄のスタイル */
 .bottom-input-box,
 .bottom-input-field {
   width: 100%;
@@ -127,11 +140,9 @@
   border-radius: clamp(1.08rem, 4vw, 1.42rem);
   background: #e5e5e5;
   box-shadow: 0 0.45rem 1.1rem rgba(0, 0, 0, 0.08);
-  box-sizing: border-box;
   font-family: inherit;
   font-size: clamp(1rem, 3.95vw, 1.12rem);
   font-weight: 400;
-  color: rgba(255, 255, 255, 0.95);
 }
 
 .bottom-input-box {
@@ -139,6 +150,7 @@
   display: flex;
   align-items: center;
   text-align: left;
+  color: rgba(0, 0, 0, 0.4); /* placeholder風の色 */
   cursor: pointer;
 }
 
@@ -154,19 +166,12 @@
   padding: 0 clamp(1.15rem, 4vw, 1.4rem);
   color: #000000;
   caret-color: #000000;
-}
-
-.bottom-input-field::placeholder {
-  color: rgba(255, 255, 255, 0.95);
-}
-
-.bottom-input-field:focus {
   outline: none;
 }
 
 .send-button {
-  width: clamp(2rem, 6vw, 2.4rem);
-  height: clamp(2rem, 6vw, 2.4rem);
+  width: clamp(2.2rem, 7vw, 2.8rem);
+  height: clamp(2.2rem, 7vw, 2.8rem);
   border: 0;
   background: transparent;
   padding: 0;
@@ -181,6 +186,7 @@
   object-fit: contain;
 }
 
+/* 丸いアクションボタン（マイク、チェック、再生など） */
 .round-action-button {
   width: clamp(5rem, 16.8vw, 6rem);
   height: clamp(5rem, 16.8vw, 6rem);
@@ -190,17 +196,16 @@
   place-items: center;
   box-shadow: 0 0.8rem 1.2rem rgba(0, 0, 0, 0.14);
   cursor: pointer;
-  padding: 0;
 }
 
 .round-action-button img {
   width: 45%;
   height: 45%;
-  object-fit: contain;
 }
 
-.home-screen {
-  padding-top: clamp(0.95rem, 3.4vh, 1.35rem);
+/* --- ホーム画面専用 --- */
+.home-screen .screen-title {
+  display: none; /* ReferenceUI準拠：Homeではタイトルを独自表示 */
 }
 
 .home-title {
@@ -216,7 +221,6 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: clamp(0.72rem, 2.7vw, 0.92rem);
-  align-items: start;
 }
 
 .home-card {
@@ -229,41 +233,23 @@
   justify-content: center;
   padding: clamp(0.58rem, 2.5vw, 0.82rem);
   cursor: pointer;
-  color: #000000;
 }
 
-.home-card-peach {
-  background: #f9d9bf;
-}
-
-.home-card-blue {
-  background: #bcd3f3;
-}
-
-.home-card-offset {
-  grid-column: 2;
-}
+.home-card-peach { background: #f9d9bf; }
+.home-card-blue { background: #bcd3f3; }
 
 .home-card-label {
   display: flex;
   flex-direction: column;
-  gap: 0.05em;
   text-align: center;
   font-size: clamp(0.94rem, 3.9vw, 1.2rem);
   line-height: 1.16;
   font-weight: 500;
+  color: #000000;
 }
 
-.home-card-label span {
-  display: block;
-}
-
-.home-card-label-single {
-  white-space: nowrap;
-}
-
+/* --- テキスト入力画面専用 (compose-screen) --- */
 .compose-screen .screen-main {
-  padding-top: clamp(3rem, 8vh, 4.1rem);
   padding-bottom: clamp(6.8rem, 13vh, 8rem);
 }
 
@@ -273,31 +259,22 @@
   position: fixed;
   left: 50%;
   transform: translateX(-50%);
+  /* キーボードの高さ分だけ上に浮かせる */
   bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + clamp(0.6rem, 2vh, 1rem));
-  width: min(calc(100vw - 2rem), 398px);
+  width: min(calc(100vw - 2.9rem), 398px);
   z-index: 30;
-  pointer-events: none;
+  background: transparent;
+  border: none;
 }
 
-.compose-screen .prompt-image-wrap {
-  width: 100%;
+.compose-screen .bottom-input-box,
+.compose-screen .bottom-input-field {
+  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.12); /* 入力時は影を強調 */
 }
 
-.compose-screen .bottom-input-row {
-  pointer-events: auto;
-}
-
+/* レスポンシブ調整 */
 @media (max-width: 360px) {
   .screen-shell {
     padding-inline: 0.9rem;
-  }
-
-  .screen-main {
-    padding-top: 2.8rem;
-  }
-
-  .home-grid {
-    margin-top: 1.35rem;
-    gap: 0.62rem;
   }
 }
