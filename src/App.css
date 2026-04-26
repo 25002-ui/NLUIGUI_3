@@ -1,5 +1,3 @@
-/* --- 緻密なスケーリングとキーボード対応を兼ね備えた完全修正版 --- */
-
 @font-face {
   font-family: 'Noto Sans CJK JP';
   src: local('Noto Sans CJK JP'), local('Noto Sans JP');
@@ -22,12 +20,12 @@ body, html, #root {
   min-height: 100svh;
   font-family: 'Noto Sans CJK JP', -apple-system, BlinkMacSystemFont, sans-serif;
   background: #ffffff;
-  overflow-x: hidden;
+  overflow: hidden; /* 画面全体のスクロールを完全に禁止 */
 }
 
 .app-shell {
   width: 100%;
-  min-height: 100svh;
+  height: 100svh;
   display: flex;
   justify-content: center;
   background: #ffffff;
@@ -35,7 +33,7 @@ body, html, #root {
 
 .screen-shell {
   width: min(100%, 430px);
-  min-height: 100svh;
+  height: 100svh;
   padding: 
     clamp(1.35rem, 4.3vw, 2.05rem) 
     clamp(1rem, 4.3vw, 1.45rem) 
@@ -45,13 +43,14 @@ body, html, #root {
   position: relative;
 }
 
-/* ヘッダーセクション */
+/* 常に最上部に固定 */
 .screen-header {
   display: grid;
   grid-template-columns: clamp(3rem, 10.6vw, 3.45rem) 1fr clamp(3rem, 10.6vw, 3.45rem);
   align-items: center;
   column-gap: clamp(0.45rem, 1.5vw, 0.72rem);
   flex: 0 0 auto;
+  z-index: 50;
 }
 
 .header-icon-button {
@@ -82,19 +81,13 @@ body, html, #root {
   white-space: nowrap;
 }
 
-/* メインコンテンツセクション */
+/* コンテンツエリアを固定 */
 .screen-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding-top: clamp(2rem, 5vh, 4rem);
-}
-
-.prompt-stack,
-.prompt-image-wrap,
-.text-content-block {
-  width: 100%;
-  padding-inline: clamp(0.12rem, 0.5vw, 0.22rem);
+  overflow: hidden; /* メイン領域のはみ出しをカット */
 }
 
 .prompt-stack {
@@ -104,16 +97,18 @@ body, html, #root {
   align-items: center;
 }
 
+.prompt-image-wrap {
+  width: 100%;
+}
+
 .prompt-image {
   width: 100%;
-  max-width: 100%;
   height: auto;
   display: block;
   object-fit: contain;
 }
 
-.screen-description,
-.screen-body-copy {
+.screen-description {
   margin: 0;
   font-size: clamp(0.96rem, 3.7vw, 1.08rem);
   line-height: 1.58;
@@ -122,16 +117,25 @@ body, html, #root {
   text-align: center;
 }
 
-/* フッターセクション（通常時） */
+/* フッター（入力エリア）：デフォルト状態 */
 .screen-footer {
-  margin-top: auto;
-  padding-top: clamp(1.5rem, 4.8vh, 2.25rem);
-  display: flex;
-  justify-content: center;
-  flex: 0 0 auto;
+  width: min(calc(100vw - 2.9rem), 398px);
+  margin: 0 auto;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + clamp(1rem, 3vh, 2rem));
+  z-index: 100;
+  pointer-events: none; /* 背後のクリックを邪魔しない */
 }
 
-/* 入力欄のスタイル */
+.bottom-input-box,
+.bottom-input-row,
+.round-action-button {
+  pointer-events: auto; /* ボタン部分はクリック可能に */
+}
+
+/* 入力欄のデザイン */
 .bottom-input-box,
 .bottom-input-field {
   width: 100%;
@@ -150,12 +154,11 @@ body, html, #root {
   display: flex;
   align-items: center;
   text-align: left;
-  color: rgba(0, 0, 0, 0.4); /* placeholder風の色 */
+  color: rgba(0, 0, 0, 0.4);
   cursor: pointer;
 }
 
 .bottom-input-row {
-  width: 100%;
   display: grid;
   grid-template-columns: 1fr auto;
   align-items: center;
@@ -165,7 +168,6 @@ body, html, #root {
 .bottom-input-field {
   padding: 0 clamp(1.15rem, 4vw, 1.4rem);
   color: #000000;
-  caret-color: #000000;
   outline: none;
 }
 
@@ -186,7 +188,6 @@ body, html, #root {
   object-fit: contain;
 }
 
-/* 丸いアクションボタン（マイク、チェック、再生など） */
 .round-action-button {
   width: clamp(5rem, 16.8vw, 6rem);
   height: clamp(5rem, 16.8vw, 6rem);
@@ -196,6 +197,7 @@ body, html, #root {
   place-items: center;
   box-shadow: 0 0.8rem 1.2rem rgba(0, 0, 0, 0.14);
   cursor: pointer;
+  margin: 0 auto;
 }
 
 .round-action-button img {
@@ -203,9 +205,9 @@ body, html, #root {
   height: 45%;
 }
 
-/* --- ホーム画面専用 --- */
-.home-screen .screen-title {
-  display: none; /* ReferenceUI準拠：Homeではタイトルを独自表示 */
+/* ホーム画面のグリッド */
+.home-screen .screen-main {
+  padding-top: clamp(0.95rem, 3.4vh, 1.35rem);
 }
 
 .home-title {
@@ -243,38 +245,6 @@ body, html, #root {
   flex-direction: column;
   text-align: center;
   font-size: clamp(0.94rem, 3.9vw, 1.2rem);
-  line-height: 1.16;
   font-weight: 500;
   color: #000000;
-}
-
-/* --- テキスト入力画面専用 (compose-screen) --- */
-.compose-screen .screen-main {
-  padding-bottom: clamp(6.8rem, 13vh, 8rem);
-}
-
-.compose-screen .screen-footer {
-  margin-top: 0;
-  padding-top: 0;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  /* キーボードの高さ分だけ上に浮かせる */
-  bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + clamp(0.6rem, 2vh, 1rem));
-  width: min(calc(100vw - 2.9rem), 398px);
-  z-index: 30;
-  background: transparent;
-  border: none;
-}
-
-.compose-screen .bottom-input-box,
-.compose-screen .bottom-input-field {
-  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.12); /* 入力時は影を強調 */
-}
-
-/* レスポンシブ調整 */
-@media (max-width: 360px) {
-  .screen-shell {
-    padding-inline: 0.9rem;
-  }
 }
