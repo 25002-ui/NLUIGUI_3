@@ -1,280 +1,153 @@
-/* --- 緻密なスケーリングとキーボード対応を兼ね備えた完全修正版 --- */
-
-@font-face {
-  font-family: 'Noto Sans CJK JP';
-  src: local('Noto Sans CJK JP'), local('Noto Sans JP');
-  font-weight: 400 700;
-}
-
+/* --- レイアウトの基本設定 --- */
 :root {
-  --keyboard-inset: 0px;
+  --keyboard-height: 0px;
 }
 
-* {
-  box-sizing: border-box;
-  -webkit-tap-highlight-color: transparent;
-}
-
-body, html, #root {
+html, body, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  min-height: 100svh;
-  font-family: 'Noto Sans CJK JP', -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #ffffff;
-  overflow-x: hidden;
-}
-
-.app-shell {
-  width: 100%;
-  min-height: 100svh;
-  display: flex;
-  justify-content: center;
-  background: #ffffff;
+  height: 100%;
+  overflow: hidden; /* 全体のスクロールを禁止 */
+  background-color: #fff;
+  font-family: -apple-system, sans-serif;
 }
 
 .screen-shell {
-  width: min(100%, 430px);
-  min-height: 100svh;
-  padding: 
-    clamp(1.35rem, 4.3vw, 2.05rem) 
-    clamp(1rem, 4.3vw, 1.45rem) 
-    clamp(1.35rem, 4.8vh, 2.05rem);
   display: flex;
   flex-direction: column;
+  width: 100%;
+  height: 100dvh;
   position: relative;
 }
 
-/* ヘッダーセクション */
+/* --- ヘッダー --- */
 .screen-header {
-  display: grid;
-  grid-template-columns: clamp(3rem, 10.6vw, 3.45rem) 1fr clamp(3rem, 10.6vw, 3.45rem);
+  display: flex;
   align-items: center;
-  column-gap: clamp(0.45rem, 1.5vw, 0.72rem);
-  flex: 0 0 auto;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  flex-shrink: 0;
 }
 
 .header-icon-button {
-  width: clamp(3rem, 10.6vw, 3.45rem);
-  height: clamp(3rem, 10.6vw, 3.45rem);
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
   background: #e4e4e4;
-  cursor: pointer;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .header-icon-button img {
-  width: 54%;
-  height: 54%;
-  object-fit: contain;
+  width: 20px;
+  height: 20px;
 }
 
 .screen-title {
+  font-size: 18px;
+  font-weight: bold;
   margin: 0;
-  font-size: clamp(1.28rem, 4.55vw, 1.62rem);
-  line-height: 1.18;
-  font-weight: 500;
-  text-align: center;
-  letter-spacing: 0.01em;
-  white-space: nowrap;
 }
 
-/* メインコンテンツセクション */
+/* --- メインエリア（位置固定） --- */
 .screen-main {
   flex: 1;
+  padding: 20px;
   display: flex;
   flex-direction: column;
-  padding-top: clamp(2rem, 5vh, 4rem);
-}
-
-.prompt-stack,
-.prompt-image-wrap,
-.text-content-block {
-  width: 100%;
-  padding-inline: clamp(0.12rem, 0.5vw, 0.22rem);
-}
-
-.prompt-stack {
-  display: flex;
-  flex-direction: column;
-  gap: clamp(1.35rem, 3.8vh, 2rem);
   align-items: center;
+  overflow: hidden;
+}
+
+.screen-description {
+  font-size: 16px;
+  margin-bottom: 15px;
+  text-align: center;
+}
+
+.prompt-image-wrap {
+  width: 100%;
+  max-width: 350px;
 }
 
 .prompt-image {
   width: 100%;
-  max-width: 100%;
   height: auto;
-  display: block;
-  object-fit: contain;
+  border-radius: 8px;
 }
 
-.screen-description,
-.screen-body-copy {
-  margin: 0;
-  font-size: clamp(0.96rem, 3.7vw, 1.08rem);
-  line-height: 1.58;
-  font-weight: 400;
-  color: #000000;
-  text-align: center;
-}
-
-/* フッターセクション（通常時） */
+/* --- 入力欄（画像の下に浮かせる） --- */
 .screen-footer {
-  margin-top: auto;
-  padding-top: clamp(1.5rem, 4.8vh, 2.25rem);
-  display: flex;
-  justify-content: center;
-  flex: 0 0 auto;
+  position: fixed;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 400px;
+  /* キーボードの高さ + 余白 20px の位置に配置 */
+  bottom: calc(var(--keyboard-height) + 20px); 
+  z-index: 1000;
+  transition: bottom 0.1s ease-out;
 }
 
-/* 入力欄のスタイル */
-.bottom-input-box,
-.bottom-input-field {
+.bottom-input-box, .bottom-input-row {
   width: 100%;
-  min-height: clamp(4rem, 7.8vh, 4.8rem);
-  border: 0;
-  border-radius: clamp(1.08rem, 4vw, 1.42rem);
-  background: #e5e5e5;
-  box-shadow: 0 0.45rem 1.1rem rgba(0, 0, 0, 0.08);
-  font-family: inherit;
-  font-size: clamp(1rem, 3.95vw, 1.12rem);
-  font-weight: 400;
-}
-
-.bottom-input-box {
-  padding: 0 clamp(1.15rem, 4vw, 1.4rem);
+  height: 54px;
+  background: #f0f0f0;
+  border-radius: 12px;
   display: flex;
   align-items: center;
-  text-align: left;
-  color: rgba(0, 0, 0, 0.4); /* placeholder風の色 */
-  cursor: pointer;
-}
-
-.bottom-input-row {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  gap: clamp(0.5rem, 1.9vw, 0.72rem);
+  padding: 0 15px;
+  border: none;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
 }
 
 .bottom-input-field {
-  padding: 0 clamp(1.15rem, 4vw, 1.4rem);
-  color: #000000;
-  caret-color: #000000;
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-size: 16px;
   outline: none;
 }
 
 .send-button {
-  width: clamp(2.2rem, 7vw, 2.8rem);
-  height: clamp(2.2rem, 7vw, 2.8rem);
-  border: 0;
   background: transparent;
-  padding: 0;
-  display: grid;
-  place-items: center;
+  border: none;
   cursor: pointer;
 }
 
 .send-button img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
+  width: 24px;
 }
 
-/* 丸いアクションボタン（マイク、チェック、再生など） */
-.round-action-button {
-  width: clamp(5rem, 16.8vw, 6rem);
-  height: clamp(5rem, 16.8vw, 6rem);
-  border: 0;
-  border-radius: 1.55rem;
-  display: grid;
-  place-items: center;
-  box-shadow: 0 0.8rem 1.2rem rgba(0, 0, 0, 0.14);
-  cursor: pointer;
-}
-
-.round-action-button img {
-  width: 45%;
-  height: 45%;
-}
-
-/* --- ホーム画面専用 --- */
-.home-screen .screen-title {
-  display: none; /* ReferenceUI準拠：Homeではタイトルを独自表示 */
-}
-
-.home-title {
-  margin: 0;
-  font-size: clamp(1.18rem, 4.4vw, 1.45rem);
-  line-height: 1.15;
-  font-weight: 500;
-  text-align: center;
+/* --- ホーム画面（改悪前のデザインを復元） --- */
+.home-screen {
+  padding: 24px;
+  overflow-y: auto;
 }
 
 .home-grid {
-  margin-top: clamp(1.55rem, 5vh, 2.2rem);
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: clamp(0.72rem, 2.7vw, 0.92rem);
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
 }
 
 .home-card {
-  width: 100%;
-  min-height: clamp(5.85rem, 13.8vh, 7.1rem);
-  border: 0;
-  border-radius: clamp(0.88rem, 3.2vw, 1.1rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: clamp(0.58rem, 2.5vw, 0.82rem);
-  cursor: pointer;
-}
-
-.home-card-peach { background: #f9d9bf; }
-.home-card-blue { background: #bcd3f3; }
-
-.home-card-label {
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  font-size: clamp(0.94rem, 3.9vw, 1.2rem);
-  line-height: 1.16;
-  font-weight: 500;
-  color: #000000;
-}
-
-/* --- テキスト入力画面専用 (compose-screen) --- */
-.compose-screen .screen-main {
-  padding-bottom: clamp(6.8rem, 13vh, 8rem);
-}
-
-.compose-screen .screen-footer {
-  margin-top: 0;
-  padding-top: 0;
-  position: fixed;
-  left: 50%;
-  transform: translateX(-50%);
-  /* キーボードの高さ分だけ上に浮かせる */
-  bottom: calc(var(--keyboard-inset) + env(safe-area-inset-bottom, 0px) + clamp(0.6rem, 2vh, 1rem));
-  width: min(calc(100vw - 2.9rem), 398px);
-  z-index: 30;
-  background: transparent;
+  aspect-ratio: 1 / 1;
+  border-radius: 16px;
   border: none;
+  padding: 16px;
+  display: flex;
+  align-items: flex-end;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: left;
 }
 
-.compose-screen .bottom-input-box,
-.compose-screen .bottom-input-field {
-  box-shadow: 0 0.6rem 1.5rem rgba(0, 0, 0, 0.12); /* 入力時は影を強調 */
-}
-
-/* レスポンシブ調整 */
-@media (max-width: 360px) {
-  .screen-shell {
-    padding-inline: 0.9rem;
-  }
-}
+.home-card-peach { background-color: #FCE4D6; }
+.home-card-blue { background-color: #DDEBF7; }
+.home-card-offset { grid-column: 1; } /* 音声チェック用の位置調整 */
