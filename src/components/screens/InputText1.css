@@ -8,7 +8,7 @@
   height: 100%;
   padding: 40px 20px; /* 上に少し余裕を持たせる */
   box-sizing: border-box;
-  gap: 24px; /* 要素同士の間隔を少し広めに調整 */
+  gap: 20px; /* 要素同士の間隔を少し広めに調整 */
 }
 
 .instruction-text {
@@ -39,6 +39,7 @@
   gap: 16px;
   width: 100%;
   max-width: 300px;
+  margin-top: -10px; /* マイナスのマージンで少し上に引き上げる */
 }
 
 /* カプセル型入力欄 */
