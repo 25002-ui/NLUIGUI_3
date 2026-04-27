@@ -25,11 +25,12 @@
   padding: clamp(12px, 3vw, 16px);
   border-radius: clamp(12px, 3vw, 16px);
   transition: background-color 0.2s ease-in-out;
-  min-height: 200px; /* 画像がない時の極端な縮みを防ぐ */
+  min-height: 200px;
 }
 
+/* output_text_3 の状態：オレンジ背景 */
 .screen-content.checked {
-  background-color: #FA6400; /* ボタン押下後のオレンジ */
+  background-color: #FA6400;
 }
 
 .content-image {
@@ -39,7 +40,6 @@
   max-width: 100%;
 }
 
-/* 画像表示時のふわっとしたアニメーション（任意） */
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -56,12 +56,11 @@
   line-height: 1.8;
   word-break: break-word;
   width: 100%;
-  /* 背景がオレンジになった時に文字を読みやすくする場合 */
   transition: color 0.2s;
 }
 
 .screen-content.checked .output-text {
-  color: #ffffff; /* オレンジ背景時は白文字にすると視認性が上がります */
+  color: #ffffff; /* 背景がオレンジの時は白文字 */
 }
 
 .check-button-container {
@@ -71,6 +70,22 @@
   margin-top: clamp(16px, 4vw, 32px);
 }
 
+/* output_text_1 用の「表示」テキストボタン */
+.text-display-button {
+  background-color: #ffffff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 24px;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.text-display-button:active {
+  transform: scale(0.95);
+}
+
+/* output_text_2, 3 用のアイコンボタン */
 .check-button {
   width: clamp(80px, 20vw, 120px);
   height: clamp(80px, 20vw, 120px);
