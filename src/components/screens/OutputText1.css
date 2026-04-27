@@ -21,14 +21,15 @@
   flex-direction: column;
   gap: clamp(16px, 3vw, 24px);
   align-items: center;
-  background-color: #F4F4F4;
+  background-color: #F4F4F4; /* 初期状態のグレー */
   padding: clamp(12px, 3vw, 16px);
   border-radius: clamp(12px, 3vw, 16px);
-  transition: background-color 0.2s;
+  transition: background-color 0.2s ease-in-out;
+  min-height: 200px; /* 画像がない時の極端な縮みを防ぐ */
 }
 
 .screen-content.checked {
-  background-color: #FA6400;
+  background-color: #FA6400; /* ボタン押下後のオレンジ */
 }
 
 .content-image {
@@ -38,6 +39,16 @@
   max-width: 100%;
 }
 
+/* 画像表示時のふわっとしたアニメーション（任意） */
+.fade-in {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
 .output-text {
   font-size: clamp(14px, 3.5vw, 16px);
   font-weight: 400;
@@ -45,6 +56,12 @@
   line-height: 1.8;
   word-break: break-word;
   width: 100%;
+  /* 背景がオレンジになった時に文字を読みやすくする場合 */
+  transition: color 0.2s;
+}
+
+.screen-content.checked .output-text {
+  color: #ffffff; /* オレンジ背景時は白文字にすると視認性が上がります */
 }
 
 .check-button-container {
