@@ -3,7 +3,6 @@ import './App.css'
 import SubjectNameInput from './components/SubjectNameInput'
 import iconBack from '../material/icon_back.png'
 import iconHome from '../material/icon_home.png'
-import iconSend from '../material/icon_send.png'
 import iconMute from '../material/icon_mute.png'
 import iconMic from '../material/icon_mic.png'
 import iconCheckBlack from '../material/icon_check_black.png'
@@ -18,9 +17,9 @@ import outputSoundAudioFile from '../material/output_sound.mp3'
 import { addLog } from './utils/logger'
 
 const HOME_BUTTONS = [
-  { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'peach' },
+  { key: 'practice_text', label: ['練習', 'テキスト入力'], tone: 'peach' },
   { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'peach' },
-  { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach', singleLine: true },
+  { key: 'input_text', label: ['テキスト入力'], tone: 'peach', singleLine: true },
   { key: 'input_sound_1', label: ['音声入力'], tone: 'peach', singleLine: true },
   {
     key: 'soundcheck',
@@ -34,10 +33,8 @@ const HOME_BUTTONS = [
 ]
 
 const SCREEN_TITLES = {
-  practice_text_1: '練習　テキスト入力',
-  practice_text_2: '練習　テキスト入力',
-  input_text_1: 'テキスト入力',
-  input_text_2: 'テキスト入力',
+  practice_text: '練習　テキスト入力',
+  input_text: 'テキスト入力',
   practice_sound_1: '練習　音声入力',
   input_sound_1: '音声入力',
   output_text_1: 'テキスト出力',
@@ -92,41 +89,18 @@ function HomeScreen({ onNavigate }) {
   )
 }
 
-function PromptImage({ src, alt }) {
-  return (
-    <div className="prompt-image-wrap">
-      <img className="prompt-image" src={src} alt={alt} />
-    </div>
-  )
-}
-
-function InputLauncher({ onClick }) {
-  return (
-    <button className="bottom-input-box" type="button" onClick={onClick}>
-      <span>文章を入力</span>
-    </button>
-  )
-}
-
 function InputComposer({ value, onChange, onSend }) {
-  const handleFocus = () => {
-    window.requestAnimationFrame(() => {
-      window.scrollTo(0, 0)
-    })
-  }
-
   return (
-    <div className="bottom-input-row">
+    <div className="input-composer-container">
       <input
-        className="bottom-input-field"
+        className="capsule-input-field"
         type="text"
         placeholder="文章を入力"
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        onFocus={handleFocus}
       />
-      <button className="send-button" type="button" onClick={onSend} aria-label="送信">
-        <img src={iconSend} alt="" />
+      <button className="capsule-send-button" type="button" onClick={onSend}>
+        送信
       </button>
     </div>
   )
@@ -146,53 +120,12 @@ function RoundActionButton({ icon, alt, backgroundColor, onClick }) {
   )
 }
 
-function PromptScreen({
-  title,
-  description,
-  image,
-  imageAlt,
-  onBack,
-  onHome,
-  footer,
-  className,
-}) {
-  return (
-    <ScreenLayout title={title} onBack={onBack} onHome={onHome} className={className}>
-      <section className="prompt-stack">
-        {description ? <p className="screen-description">{description}</p> : null}
-        <PromptImage src={image} alt={imageAlt} />
-      </section>
-      <div className="screen-footer">{footer}</div>
-    </ScreenLayout>
-  )
-}
-
-function TextOnlyScreen({
-  title,
-  description,
-  body,
-  onBack,
-  onHome,
-  footer,
-}) {
-  return (
-    <ScreenLayout title={title} onBack={onBack} onHome={onHome}>
-      <section className="text-content-block">
-        <p className="screen-description">{description}</p>
-        {body ? <div className="screen-body-copy">{body}</div> : null}
-      </section>
-      <div className="screen-footer">{footer}</div>
-    </ScreenLayout>
-  )
-}
-
 function App() {
   const [isExperimentStarted, setIsExperimentStarted] = useState(false)
   const [subjectName, setSubjectName] = useState('')
   const [isTestMode, setIsTestMode] = useState(false)
   const [currentScreen, setCurrentScreen] = useState('home')
   const [screenHistory, setScreenHistory] = useState([])
-  const [practiceTextValue, setPracticeTextValue] = useState('')
   const [inputTextValue, setInputTextValue] = useState('')
   const [isPracticeMicActive, setIsPracticeMicActive] = useState(false)
   const [isInputMicActive, setIsInputMicActive] = useState(false)
@@ -202,63 +135,34 @@ function App() {
   const soundcheckAudioRef = useRef(null)
   const outputSoundAudioRef = useRef(null)
 
-  // ログを記録するヘルパー関数
   const recordLog = (actionName, screenName = currentScreen, buttonName = '', inputText = '') => {
-    if (isTestMode) {
-      return // テストモード中はログを記録しない
-    }
-
-    addLog({
-      subjectName,
-      screenName,
-      actionName,
-      buttonName,
-      inputText,
-    })
+    if (isTestMode) return
+    addLog({ subjectName, screenName, actionName, buttonName, inputText })
   }
 
   const handleStartExperiment = (name) => {
     setSubjectName(name)
     setIsTestMode(false)
     setIsExperimentStarted(true)
-    // 実験開始をログに記録
-    addLog({
-      subjectName: name,
-      screenName: 'SubjectNameInput',
-      actionName: '実験開始',
-      buttonName: '開始',
-      inputText: '',
-    })
+    addLog({ subjectName: name, screenName: 'SubjectNameInput', actionName: '実験開始', buttonName: '開始', inputText: '' })
   }
 
   const handleStartTestMode = () => {
     setIsTestMode(true)
     setIsExperimentStarted(true)
     setCurrentScreen('home')
-    // テストモードではログを記録しない
   }
 
   const navigateTo = (screenName) => {
-    if (screenName === 'practice_sound_1') {
-      setIsPracticeMicActive(false)
-    }
-
-    // 画面遷移をログに記録
-    recordLog('画面遷移', screenName, screenName, '')
-
     setScreenHistory((history) => [...history, currentScreen])
     setCurrentScreen(screenName)
+    recordLog('画面遷移', screenName, screenName, '')
   }
 
   const goBack = () => {
-    // 戻るボタン押下をログに記録
     recordLog('戻るボタン押下')
-
     setScreenHistory((history) => {
-      if (history.length === 0) {
-        return history
-      }
-
+      if (history.length === 0) return history
       const nextHistory = history.slice(0, -1)
       setCurrentScreen(history[history.length - 1])
       return nextHistory
@@ -266,364 +170,149 @@ function App() {
   }
 
   const goHome = () => {
-    // Homeボタン押下をログに記録
     recordLog('Homeボタン押下')
-
     setCurrentScreen('home')
     setScreenHistory([])
   }
 
-  const stopSoundcheckAudio = () => {
-    if (!soundcheckAudioRef.current) {
-      return
+  const stopAudio = (ref) => {
+    if (ref.current) {
+      ref.current.pause()
+      ref.current.currentTime = 0
+      ref.current = null
     }
-
-    soundcheckAudioRef.current.pause()
-    soundcheckAudioRef.current.currentTime = 0
-    soundcheckAudioRef.current = null
   }
-
-  const stopOutputSoundAudio = () => {
-    if (outputSoundAudioRef.current) {
-      outputSoundAudioRef.current.pause()
-      outputSoundAudioRef.current.currentTime = 0
-      outputSoundAudioRef.current.onended = null
-      outputSoundAudioRef.current.onerror = null
-      outputSoundAudioRef.current = null
-    }
-
-    setIsOutputSoundPlaying(false)
-  }
-
-  useEffect(() => {
-    if (!window.visualViewport) {
-      return undefined
-    }
-
-    const updateKeyboardInset = () => {
-      const inset = Math.max(
-        0,
-        window.innerHeight - window.visualViewport.height - window.visualViewport.offsetTop,
-      )
-      document.documentElement.style.setProperty('--keyboard-inset', `${inset}px`)
-    }
-
-    updateKeyboardInset()
-    window.visualViewport.addEventListener('resize', updateKeyboardInset)
-    window.visualViewport.addEventListener('scroll', updateKeyboardInset)
-
-    return () => {
-      window.visualViewport.removeEventListener('resize', updateKeyboardInset)
-      window.visualViewport.removeEventListener('scroll', updateKeyboardInset)
-    }
-  }, [])
 
   useEffect(() => {
     if (currentScreen !== 'soundcheck') {
-      stopSoundcheckAudio()
-      return undefined
-    }
-
-    // soundcheck 画面表示をログに記録
-    recordLog('画面表示', 'soundcheck')
-
-    const audio = new Audio(soundcheckAudioFile)
-    audio.loop = true
-    soundcheckAudioRef.current = audio
-    audio.play().catch(() => {})
-
-    return () => {
-      if (soundcheckAudioRef.current === audio) {
-        stopSoundcheckAudio()
-      } else {
-        audio.pause()
-        audio.currentTime = 0
-      }
+      stopAudio(soundcheckAudioRef)
+    } else {
+      const audio = new Audio(soundcheckAudioFile)
+      audio.loop = true
+      soundcheckAudioRef.current = audio
+      audio.play().catch(() => {})
     }
   }, [currentScreen])
 
   useEffect(() => {
-    if (currentScreen === 'output_sound_1') {
-      return undefined
-    }
-
-    stopOutputSoundAudio()
-    return undefined
-  }, [currentScreen])
-
-  useEffect(() => {
-    // output_text_1 画面表示をログに記録
-    if (currentScreen === 'output_text_1') {
-      recordLog('画面表示', 'output_text_1')
-    }
-  }, [currentScreen])
-
-  const replaySoundcheck = () => {
-    if (!soundcheckAudioRef.current) {
-      return
-    }
-
-    // soundcheck 再生ボタン押下をログに記録
-    recordLog('音声再生開始', 'soundcheck', '再生ボタン', '')
-
-    soundcheckAudioRef.current.currentTime = 0
-    soundcheckAudioRef.current.play().catch(() => {})
-  }
-
-  const playOutputSound = () => {
-    if (isOutputSoundPlaying) {
-      return
-    }
-
-    stopOutputSoundAudio()
-
-    const audio = new Audio(outputSoundAudioFile)
-    outputSoundAudioRef.current = audio
-    setIsOutputSoundPlaying(true)
-
-    // 音声再生開始をログに記録
-    recordLog('音声再生開始', 'output_sound_1', '再生ボタン', '')
-
-    const finishPlayback = () => {
-      if (outputSoundAudioRef.current === audio) {
-        outputSoundAudioRef.current = null
-      }
-      // 音声再生終了をログに記録
-      recordLog('音声再生終了', 'output_sound_1', '', '')
+    if (currentScreen !== 'output_sound_1') {
+      stopAudio(outputSoundAudioRef)
       setIsOutputSoundPlaying(false)
     }
+  }, [currentScreen])
 
-    audio.onended = finishPlayback
-    audio.onerror = finishPlayback
-    audio.play().catch(finishPlayback)
-  }
-
-  const handlePracticeTextSend = () => {
-    // practice_text_2 送信ボタン押下をログに記録
-    recordLog('送信ボタン押下', 'practice_text_2', '送信', practiceTextValue)
-    setPracticeTextValue('')
-    goBack()
-  }
-
-  const handleInputTextSend = () => {
-    // input_text_2 送信ボタン押下をログに記録
-    recordLog('送信ボタン押下', 'input_text_2', '送信', inputTextValue)
+  const handleTextSend = (screenKey) => {
+    recordLog('送信ボタン押下', screenKey, '送信', inputTextValue)
     setInputTextValue('')
-    goBack()
-  }
-
-  const handlePracticeTextBoxClick = () => {
-    // practice_text_1 テキストボックス押下をログに記録
-    recordLog('テキストボックス押下', 'practice_text_1', 'テキストボックス', '')
-    navigateTo('practice_text_2')
-  }
-
-  const handleInputTextBoxClick = () => {
-    // input_text_1 テキストボックス押下をログに記録
-    recordLog('テキストボックス押下', 'input_text_1', 'テキストボックス', '')
-    navigateTo('input_text_2')
-  }
-
-  const handlePracticeMicToggle = () => {
-    const newState = !isPracticeMicActive
-    setIsPracticeMicActive(newState)
-
-    // マイク ON/OFF をログに記録
-    const actionName = newState ? 'マイク開始' : 'マイク停止'
-    recordLog(actionName, 'practice_sound_1', 'マイクボタン', '')
-  }
-
-  const handleInputMicToggle = () => {
-    const newState = !isInputMicActive
-    setIsInputMicActive(newState)
-
-    // マイク ON/OFF をログに記録
-    const actionName = newState ? 'マイク開始' : 'マイク停止'
-    recordLog(actionName, 'input_sound_1', 'マイクボタン', '')
-  }
-
-  const handleOutputTextCheckToggle = () => {
-    setIsOutputTextChecked(!isOutputTextChecked)
-
-    // チェックボタン押下をログに記録
-    recordLog('チェックボタン押下', 'output_text_1', 'チェック', '')
+    goHome()
   }
 
   const renderScreen = () => {
     if (!isExperimentStarted) {
-      return (
-        <SubjectNameInput
-          onStartExperiment={handleStartExperiment}
-          onStartTestMode={handleStartTestMode}
-        />
-      )
+      return <SubjectNameInput onStartExperiment={handleStartExperiment} onStartTestMode={handleStartTestMode} />
     }
 
     switch (currentScreen) {
       case 'home':
         return <HomeScreen onNavigate={navigateTo} />
 
-      case 'practice_text_1':
+      case 'practice_text':
+      case 'input_text':
         return (
-          <PromptScreen
-            title={SCREEN_TITLES.practice_text_1}
-            description="以下の文章をテキスト入力してください。"
-            image={practiceTextImage}
-            imageAlt="練習テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            footer={<InputLauncher onClick={handlePracticeTextBoxClick} />}
-          />
-        )
-
-      case 'practice_text_2':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.practice_text_2}
-            description="以下の文章をテキスト入力してください。"
-            image={practiceTextImage}
-            imageAlt="練習テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            className="compose-screen"
-            footer={
-              <InputComposer
-                value={practiceTextValue}
-                onChange={setPracticeTextValue}
-                onSend={handlePracticeTextSend}
-              />
-            }
-          />
-        )
-
-      case 'input_text_1':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.input_text_1}
-            description="以下の文章をテキスト入力してください。"
-            image={inputTextImage}
-            imageAlt="テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            footer={<InputLauncher onClick={handleInputTextBoxClick} />}
-          />
-        )
-
-      case 'input_text_2':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.input_text_2}
-            description="以下の文章をテキスト入力してください。"
-            image={inputTextImage}
-            imageAlt="テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            className="compose-screen"
-            footer={
+          <ScreenLayout title={SCREEN_TITLES[currentScreen]} onBack={goBack} onHome={goHome}>
+            <section className="centered-prompt-content">
+              <p className="screen-description">以下の文章をテキスト入力してください。</p>
+              <div className="prompt-image-wrap">
+                <img className="prompt-image" src={currentScreen === 'practice_text' ? practiceTextImage : inputTextImage} alt="指示画像" />
+              </div>
               <InputComposer
                 value={inputTextValue}
                 onChange={setInputTextValue}
-                onSend={handleInputTextSend}
+                onSend={() => handleTextSend(currentScreen)}
               />
-            }
-          />
+            </section>
+          </ScreenLayout>
         )
 
       case 'practice_sound_1':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.practice_sound_1}
-            description="以下の文章を音声入力してください。"
-            image={practiceTextImage}
-            imageAlt="練習音声入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={isPracticeMicActive ? iconMic : iconMute}
-                alt="練習音声入力"
-                backgroundColor="#F4F4F4"
-                onClick={handlePracticeMicToggle}
-              />
-            }
-          />
-        )
-
       case 'input_sound_1':
+        const isActive = currentScreen === 'practice_sound_1' ? isPracticeMicActive : isInputMicActive
+        const toggleMic = () => {
+          const setter = currentScreen === 'practice_sound_1' ? setIsPracticeMicActive : setIsInputMicActive
+          setter(!isActive)
+          recordLog(!isActive ? 'マイク開始' : 'マイク停止', currentScreen, 'マイクボタン')
+        }
         return (
-          <PromptScreen
-            title={SCREEN_TITLES.input_sound_1}
-            description="以下の文章を音声入力してください。"
-            image={inputTextImage}
-            imageAlt="音声入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={isInputMicActive ? iconMic : iconMute}
-                alt="音声入力"
-                backgroundColor={isInputMicActive ? '#F4F4F4' : '#E5E5E5'}
-                onClick={handleInputMicToggle}
-              />
-            }
-          />
+          <ScreenLayout title={SCREEN_TITLES[currentScreen]} onBack={goBack} onHome={goHome}>
+            <section className="centered-prompt-content">
+              <p className="screen-description">以下の文章を音声入力してください。</p>
+              <div className="prompt-image-wrap">
+                <img className="prompt-image" src={currentScreen === 'practice_sound_1' ? practiceTextImage : inputTextImage} alt="指示画像" />
+              </div>
+              <div className="mic-button-container">
+                <RoundActionButton
+                  icon={isActive ? iconMic : iconMute}
+                  backgroundColor={isActive ? '#FA6400' : '#F4F4F4'}
+                  onClick={toggleMic}
+                />
+              </div>
+            </section>
+          </ScreenLayout>
         )
 
       case 'output_text_1':
         return (
-          <PromptScreen
-            title={SCREEN_TITLES.output_text_1}
-            image={outputTextImage}
-            imageAlt="テキスト出力の文章"
-            onBack={goBack}
-            onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={isOutputTextChecked ? iconCheckWhite : iconCheckBlack}
-                alt="テキスト出力確認"
-                backgroundColor={isOutputTextChecked ? '#FA6400' : '#F4F4F4'}
-                onClick={handleOutputTextCheckToggle}
-              />
-            }
-          />
+          <ScreenLayout title={SCREEN_TITLES.output_text_1} onBack={goBack} onHome={goHome}>
+            <section className="centered-prompt-content">
+              <div className="prompt-image-wrap">
+                <img className="prompt-image" src={outputTextImage} alt="テキスト出力" />
+              </div>
+              <div className="check-button-container">
+                <RoundActionButton
+                  icon={isOutputTextChecked ? iconCheckWhite : iconCheckBlack}
+                  backgroundColor={isOutputTextChecked ? '#FA6400' : '#F4F4F4'}
+                  onClick={() => {
+                    setIsOutputTextChecked(!isOutputTextChecked)
+                    recordLog('チェックボタン押下', 'output_text_1', 'チェック')
+                  }}
+                />
+              </div>
+            </section>
+          </ScreenLayout>
         )
 
       case 'soundcheck':
-        return (
-          <TextOnlyScreen
-            title={SCREEN_TITLES.soundcheck}
-            description="聞きやすい音量に調節してください。"
-            body={null}
-            onBack={goBack}
-            onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={iconPlayWhite}
-                alt="音声チェック再生"
-                backgroundColor="#FA6400"
-                onClick={replaySoundcheck}
-              />
-            }
-          />
-        )
-
       case 'output_sound_1':
+        const isOutput = currentScreen === 'output_sound_1'
+        const play = () => {
+          if (isOutput) {
+            if (isOutputSoundPlaying) return
+            const audio = new Audio(outputSoundAudioFile)
+            outputSoundAudioRef.current = audio
+            setIsOutputSoundPlaying(true)
+            audio.onended = () => setIsOutputSoundPlaying(false)
+            audio.play().catch(() => setIsOutputSoundPlaying(false))
+          } else {
+            soundcheckAudioRef.current.currentTime = 0
+            soundcheckAudioRef.current.play()
+          }
+          recordLog('音声再生開始', currentScreen, '再生ボタン')
+        }
         return (
-          <TextOnlyScreen
-            title={SCREEN_TITLES.output_sound_1}
-            description="以下のボタンを押して、音声を聞いてください。"
-            body={null}
-            onBack={goBack}
-            onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack}
-                alt="音声出力再生"
-                backgroundColor={isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}
-                onClick={playOutputSound}
-              />
-            }
-          />
+          <ScreenLayout title={SCREEN_TITLES[currentScreen]} onBack={goBack} onHome={goHome}>
+            <section className="centered-text-content">
+              <p className="screen-description">
+                {isOutput ? "以下のボタンを押して、音声を聞いてください。" : "聞きやすい音量に調節してください。"}
+              </p>
+              <div className="play-button-container">
+                <RoundActionButton
+                  icon={isOutput && isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack}
+                  backgroundColor={isOutput && isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}
+                  onClick={play}
+                />
+              </div>
+            </section>
+          </ScreenLayout>
         )
 
       default:
