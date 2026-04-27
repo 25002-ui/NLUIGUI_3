@@ -3,19 +3,11 @@ import './OutputText1.css'
 import ScreenHeader from '../ScreenHeader'
 
 export default function OutputText1({ navigateTo, goBack, goHome }) {
-  // step 0: output_text_1 (初期：画像なし、表示ボタン)
-  // step 1: output_text_2 (画像あり、黒チェックボタン)
-  // step 2: output_text_3 (画像あり、オレンジ背景、白チェックボタン)
-  const [step, setStep] = useState(0)
+  // isCheckedがtrueの時に「画像表示」かつ「背景色変更」を行う
+  const [isChecked, setIsChecked] = useState(false)
 
-  const handleNextStep = () => {
-    if (step === 0) {
-      setStep(1)
-    } else if (step === 1) {
-      setStep(2)
-    } else {
-      setStep(0) // ループさせる場合
-    }
+  const handleCheckClick = () => {
+    setIsChecked(!isChecked)
   }
 
   return (
@@ -23,11 +15,11 @@ export default function OutputText1({ navigateTo, goBack, goHome }) {
       <div className="screen-wrapper">
         <ScreenHeader title="テキスト出力" onBack={goBack} onHome={goHome} />
 
-        {/* step 2 の時だけ 'state-orange' クラスを付与して背景を変える */}
-        <div className={`screen-content ${step === 2 ? 'state-orange' : ''}`}>
+        {/* isCheckedの状態に応じて 'checked' クラスを付与 */}
+        <div className={`screen-content ${isChecked ? 'checked' : ''}`}>
           
-          {/* step 1 か 2 の時だけ画像を表示 */}
-          {(step === 1 || step === 2) && (
+          {/* 【変更点】isCheckedがtrueの時のみ画像を表示 */}
+          {isChecked && (
             <img 
               src="/material/output_text.png" 
               alt="Output Text" 
@@ -40,20 +32,12 @@ export default function OutputText1({ navigateTo, goBack, goHome }) {
           </div>
 
           <div className="check-button-container">
-            {step === 0 ? (
-              // step 0: 「表示」テキストボタン
-              <button className="text-display-button" onClick={handleNextStep}>
-                表示
-              </button>
-            ) : (
-              // step 1, 2: アイコンボタン
-              <button className="check-button" onClick={handleNextStep}>
-                <img 
-                  src={step === 2 ? '/material/icon_check_white.png' : '/material/icon_check_black.png'} 
-                  alt="Check" 
-                />
-              </button>
-            )}
+            <button className="check-button" onClick={handleCheckClick}>
+              <img 
+                src={isChecked ? '/material/icon_check_white.png' : '/material/icon_check_black.png'} 
+                alt="Check" 
+              />
+            </button>
           </div>
         </div>
       </div>
