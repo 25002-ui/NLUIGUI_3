@@ -45,62 +45,10 @@ function App() {
   const [isPracticeMicActive, setIsPracticeMicActive] = useState(false)
   const [isInputMicActive, setIsInputMicActive] = useState(false)
   const [isOutputTextChecked, setIsOutputTextChecked] = useState(false)
-  const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false)
+  const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false) // ここを1つに統合
 
-// --- 音声再生用のStateとRefを追加 ---
-const soundcheckAudioRef = useRef(null);
-const outputSoundAudioRef = useRef(null);
-const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false);
-
-// 再生関数
-const playSoundcheck = () => {
-  if (soundcheckAudioRef.current) {
-    soundcheckAudioRef.current.currentTime = 0;
-    soundcheckAudioRef.current.play();
-  }
-};
-
-const playOutputSound = () => {
-  if (outputSoundAudioRef.current) {
-    if (isOutputSoundPlaying) {
-      outputSoundAudioRef.current.pause();
-      setIsOutputSoundPlaying(false);
-    } else {
-      outputSoundAudioRef.current.currentTime = 0;
-      outputSoundAudioRef.current.play();
-      setIsOutputSoundPlaying(true);
-    }
-  }
-};
-
-// --- JSX内のオーディオタグとボタンへの紐付け ---
-return (
-  <div className="app-shell">
-    {/* 音声ファイルを隠し要素として配置 */}
-    <audio ref={soundcheckAudioRef} src={soundcheckAudioFile} />
-    <audio 
-      ref={outputSoundAudioRef} 
-      src={outputSoundAudioFile} 
-      onEnded={() => setIsOutputSoundPlaying(false)} 
-    />
-
-    {/* ...中略（レンダリング部分）... */}
-
-    {/* soundcheck画面のボタン */}
-    {currentScreen === 'soundcheck' && (
-      <button className="round-action-button" style={{backgroundColor: '#FA6400'}} onClick={playSoundcheck}>
-        <img src={iconPlayWhite} alt="再生" />
-      </button>
-    )}
-
-    {/* output_sound_1画面のボタン */}
-    {currentScreen === 'output_sound_1' && (
-      <button className="round-action-button" style={{backgroundColor: isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}} onClick={playOutputSound}>
-        <img src={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack} alt="再生" />
-      </button>
-    )}
-  </div>
-);
+  const soundcheckAudioRef = useRef(null)
+  const outputSoundAudioRef = useRef(null)
 
   useEffect(() => {
     const handleViewportChange = () => {
@@ -137,11 +85,30 @@ return (
     setScreenHistory([])
   }
 
+  // 音声再生ロジック
+  const playSoundcheck = () => {
+    if (soundcheckAudioRef.current) {
+      soundcheckAudioRef.current.currentTime = 0;
+      soundcheckAudioRef.current.play().catch(() => {});
+    }
+  };
+
+  const playOutputSound = () => {
+    if (outputSoundAudioRef.current) {
+      if (isOutputSoundPlaying) {
+        outputSoundAudioRef.current.pause();
+        setIsOutputSoundPlaying(false);
+      } else {
+        outputSoundAudioRef.current.currentTime = 0;
+        outputSoundAudioRef.current.play().then(() => setIsOutputSoundPlaying(true)).catch(() => setIsOutputSoundPlaying(false));
+      }
+    }
+  };
+
   if (!isExperimentStarted) {
     return <SubjectNameInput onStartExperiment={(n) => { setSubjectName(n); setIsExperimentStarted(true); }} onStartTestMode={() => { setIsTestMode(true); setIsExperimentStarted(true); }} />
   }
 
-  // ホーム画面
   if (currentScreen === 'home') {
     return (
       <div className="app-shell home-screen">
@@ -157,46 +124,44 @@ return (
     )
   }
 
-  // コンテンツの判定
   const isPractice = currentScreen.startsWith('practice');
-  const isTextType = currentScreen.includes('text');
-  const isSoundType = currentScreen.includes('sound') || currentScreen === 'soundcheck';
   const isStep2 = currentScreen.endsWith('_2');
+  const isTextType = currentScreen.includes('text') && !currentScreen.includes('output');
 
-  // 画像の選択
   let imageSrc = null;
-  if (currentScreen.includes('practice_text')) imageSrc = practiceTextImage;
-  else if (currentScreen.includes('input_text')) imageSrc = inputTextImage;
-  else if (currentScreen.includes('output_text')) imageSrc = outputTextImage;
-  else if (currentScreen.includes('practice_sound')) imageSrc = practiceTextImage;
-  else if (currentScreen.includes('input_sound')) imageSrc = inputTextImage;
+  if (currentScreen.includes('text') && !currentScreen.includes('output')) imageSrc = isPractice ? practiceTextImage : inputTextImage;
+  else if (currentScreen === 'output_text_1') imageSrc = outputTextImage;
+  else if (currentScreen.includes('sound') && !currentScreen.includes('output')) imageSrc = isPractice ? practiceTextImage : inputTextImage;
 
   return (
     <div className="app-shell">
-      <header className="screen-header">
-        <button className="header-icon-button" onClick={goBack}><img src={iconBack} alt="戻る" /></button>
-        <h1 className="screen-title">{SCREEN_TITLES[currentScreen]}</h1>
-        <button className="header-icon-button" onClick={goHome}><img src={iconHome} alt="ホーム" /></button>
-      </header>
+      <audio ref={soundcheckAudioRef} src={soundcheckAudioFile} loop />
+      <audio ref={outputSoundAudioRef} src={outputSoundAudioFile} onEnded={() => setIsOutputSoundPlaying(false)} />
+      
+      <div className="screen-shell">
+        <header className="screen-header">
+          <button className="header-icon-button" onClick={goBack}><img src={iconBack} alt="戻る" /></button>
+          <h1 className="screen-title">{SCREEN_TITLES[currentScreen]}</h1>
+          <button className="header-icon-button" onClick={goHome}><img src={iconHome} alt="ホーム" /></button>
+        </header>
 
-      <main className="screen-main">
-        <section className="prompt-stack">
-          {/* 説明文の表示 */}
-          {!currentScreen.includes('output') && !currentScreen.includes('soundcheck') && (
-            <p className="screen-description">以下の文章を{isTextType ? 'テキスト' : '音声'}入力してください。</p>
+        <main className="screen-main">
+          {/* 説明文 */}
+          {currentScreen === 'soundcheck' ? (
+            <p className="screen-description">聞きやすい音量に調節してください。</p>
+          ) : currentScreen === 'output_sound_1' ? (
+            <p className="screen-description">以下のボタンを押して、音声を聞いてください。</p>
+          ) : !currentScreen.includes('output') && (
+            <p className="screen-description">以下の文章を{currentScreen.includes('text') ? 'テキスト' : '音声'}入力してください。</p>
           )}
-          {currentScreen === 'soundcheck' && <p className="screen-description">聞きやすい音量に調節してください。</p>}
-          {currentScreen === 'output_sound_1' && <p className="screen-description">以下のボタンを押して、音声を聞いてください。</p>}
 
-          {/* 画像の表示 */}
-          {imageSrc && (
-            <div className="prompt-image-wrap"><img className="prompt-image" src={imageSrc} alt="" /></div>
-          )}
+          {/* 画像 */}
+          {imageSrc && <div className="prompt-image-wrap"><img className="prompt-image" src={imageSrc} alt="" /></div>}
 
-          {/* フッター要素（必要なものだけを出す） */}
+          {/* フッターエリア */}
           <div className="screen-footer">
-            {/* テキスト入力画面の場合 */}
-            {isTextType && !currentScreen.includes('output') && (
+            {/* テキスト入力 */}
+            {isTextType && (
               !isStep2 ? (
                 <button className="bottom-input-box" onClick={() => navigateTo(currentScreen.replace('_1', '_2'))}>
                   <span>文章を入力</span>
@@ -209,37 +174,27 @@ return (
               )
             )}
 
-            {/* 音声入力画面の場合 */}
-            {isSoundType && currentScreen.includes('practice_sound') && (
-              <button className="round-action-button" style={{backgroundColor: '#F4F4F4'}} onClick={() => setIsPracticeMicActive(!isPracticeMicActive)}>
-                <img src={isPracticeMicActive ? iconMic : iconMute} alt="マイク" />
-              </button>
+            {/* 音声入力 */}
+            {currentScreen === 'practice_sound_1' && (
+              <button className="round-action-button" style={{background: '#F4F4F4'}} onClick={() => setIsPracticeMicActive(!isPracticeMicActive)}><img src={isPracticeMicActive ? iconMic : iconMute} alt="" /></button>
             )}
-            {isSoundType && currentScreen.includes('input_sound') && (
-              <button className="round-action-button" style={{backgroundColor: isInputMicActive ? '#F4F4F4' : '#E5E5E5'}} onClick={() => setIsInputMicActive(!isInputMicActive)}>
-                <img src={isInputMicActive ? iconMic : iconMute} alt="マイク" />
-              </button>
+            {currentScreen === 'input_sound_1' && (
+              <button className="round-action-button" style={{background: isInputMicActive ? '#F4F4F4' : '#E5E5E5'}} onClick={() => setIsInputMicActive(!isInputMicActive)}><img src={isInputMicActive ? iconMic : iconMute} alt="" /></button>
             )}
 
-            {/* 出力・チェック画面の場合 */}
+            {/* その他ボタン */}
             {currentScreen === 'output_text_1' && (
-              <button className="round-action-button" style={{backgroundColor: isOutputTextChecked ? '#FA6400' : '#F4F4F4'}} onClick={() => setIsOutputTextChecked(!isOutputTextChecked)}>
-                <img src={isOutputTextChecked ? iconCheckWhite : iconCheckBlack} alt="チェック" />
-              </button>
+              <button className="round-action-button" style={{background: isOutputTextChecked ? '#FA6400' : '#F4F4F4'}} onClick={() => setIsOutputTextChecked(!isOutputTextChecked)}><img src={isOutputTextChecked ? iconCheckWhite : iconCheckBlack} alt="" /></button>
             )}
             {currentScreen === 'soundcheck' && (
-              <button className="round-action-button" style={{backgroundColor: '#FA6400'}} onClick={() => {}}>
-                <img src={iconPlayWhite} alt="再生" />
-              </button>
+              <button className="round-action-button" style={{background: '#FA6400'}} onClick={playSoundcheck}><img src={iconPlayWhite} alt="" /></button>
             )}
             {currentScreen === 'output_sound_1' && (
-              <button className="round-action-button" style={{backgroundColor: isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}} onClick={() => setIsOutputSoundPlaying(!isOutputSoundPlaying)}>
-                <img src={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack} alt="再生" />
-              </button>
+              <button className="round-action-button" style={{background: isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}} onClick={playOutputSound}><img src={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack} alt="" /></button>
             )}
           </div>
-        </section>
-      </main>
+        </main>
+      </div>
     </div>
   )
 }
