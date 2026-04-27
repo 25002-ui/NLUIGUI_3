@@ -21,16 +21,20 @@
   flex-direction: column;
   gap: clamp(16px, 3vw, 24px);
   align-items: center;
-  background-color: #F4F4F4; /* 初期状態のグレー */
+  background-color: #F4F4F4; /* step 0, 1 の背景色 */
   padding: clamp(12px, 3vw, 16px);
   border-radius: clamp(12px, 3vw, 16px);
   transition: background-color 0.2s ease-in-out;
   min-height: 200px;
 }
 
-/* output_text_3 の状態：オレンジ背景 */
-.screen-content.checked {
-  background-color: #FA6400;
+/* step 2 の状態 */
+.screen-content.state-orange {
+  background-color: #FA6400; /* オレンジ背景 */
+}
+
+.screen-content.state-orange .output-text {
+  color: #ffffff; /* オレンジ背景時は白文字 */
 }
 
 .content-image {
@@ -59,10 +63,6 @@
   transition: color 0.2s;
 }
 
-.screen-content.checked .output-text {
-  color: #ffffff; /* 背景がオレンジの時は白文字 */
-}
-
 .check-button-container {
   display: flex;
   justify-content: center;
@@ -70,53 +70,37 @@
   margin-top: clamp(16px, 4vw, 32px);
 }
 
-/* output_text_1 用の「表示」テキストボタン */
+/* step 0 用：表示ボタン */
 .text-display-button {
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 8px;
-  padding: 8px 24px;
+  padding: 8px 32px;
   font-size: 16px;
+  font-weight: bold;
   cursor: pointer;
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.text-display-button:active {
-  transform: scale(0.95);
-}
-
-/* output_text_2, 3 用のアイコンボタン */
+/* step 1, 2 用：チェックボタン */
 .check-button {
   width: clamp(80px, 20vw, 120px);
   height: clamp(80px, 20vw, 120px);
   border: none;
   background-color: transparent;
-  border-radius: 50%;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: transform 0.2s;
-}
-
-.check-button:active {
-  transform: scale(0.95);
 }
 
 .check-button img {
-  width: clamp(40px, 10vw, 60px);
-  height: clamp(40px, 10vw, 60px);
+  width: 100%;
+  height: 100%;
   object-fit: contain;
 }
 
-@media (max-width: 380px) {
-  .screen-container {
-    padding: 12px;
-    padding-top: 16px;
-  }
-
-  .screen-content {
-    gap: 16px;
-  }
+.check-button:active, .text-display-button:active {
+  transform: scale(0.95);
 }
