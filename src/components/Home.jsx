@@ -1,39 +1,42 @@
-import './Home.css';
+import './Home.css'
 
-const HOME_BUTTONS = [
-  { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'peach' },
-  { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'peach' },
-  { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach' },
-  { key: 'input_sound_1', label: ['音声入力'], tone: 'peach' },
-  { key: 'soundcheck', label: ['音声チェック'], tone: 'blue' },
-  { key: 'output_text_1', label: ['テキスト出力'], tone: 'blue' },
-  { key: 'output_sound_1', label: ['音声出力'], tone: 'blue' },
-];
-
-function HomeScreen({ onNavigate }) {
+export default function Home({ navigateTo }) {
   return (
     <div className="home-container">
-      <h1 className="home-title">
-        利用する機能を選択して<br />ください
-      </h1>
-      <div className="home-grid">
-        {HOME_BUTTONS.map((button) => (
-          <button
-            key={button.key}
-            className={`home-card home-card-${button.tone} ${button.key === 'soundcheck' ? 'home-card-offset' : ''}`}
-            type="button"
-            onClick={() => onNavigate(button.key)}
-          >
-            <div className="home-card-label">
-              {button.label.map((line, index) => (
-                <span key={index}>{line}</span>
-              ))}
-            </div>
+      <div className="home-wrapper">
+        <h1 className="home-title">Home</h1>
+        
+        <div className="buttons-grid">
+          {/* Row 1: 練習テキスト入力、練習音声入力 */}
+          <button className="home-button peach-button" onClick={() => navigateTo('practice_text_1')}>
+            <span className="button-text">練習<br />テキスト入力</span>
           </button>
-        ))}
+          <button className="home-button peach-button" onClick={() => navigateTo('practice_sound_1')}>
+            <span className="button-text">練習<br />音声入力</span>
+          </button>
+
+          {/* Row 2: テキスト入力、音声入力 */}
+          <button className="home-button peach-button" onClick={() => navigateTo('input_text_1')}>
+            <span className="button-text">テキスト入力</span>
+          </button>
+          <button className="home-button peach-button" onClick={() => navigateTo('input_sound_1')}>
+            <span className="button-text">音声入力</span>
+          </button>
+
+          {/* Row 3: 音声チェック（中央配置） */}
+          <button className="home-button blue-button check-button" onClick={() => navigateTo('soundcheck')}>
+            <span className="button-text">音声チェック</span>
+          </button>
+
+          {/* Row 4: テキスト出力、音声出力 */}
+          <button className="home-button blue-button" onClick={() => navigateTo('output_text_1')}>
+            <span className="button-text">テキスト出力</span>
+          </button>
+          <button className="home-button blue-button" onClick={() => navigateTo('output_sound_1')}>
+            <span className="button-text">音声出力</span>
+          </button>
+        </div>
       </div>
     </div>
-  );
+  )
 }
-
-export default HomeScreen;
