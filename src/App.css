@@ -150,29 +150,43 @@ body, html, #root {
   padding: 20px;
 }
 
+/* Home画面のタイトル・グリッド調整 */
 .home-title {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: clamp(1.8rem, 6vw, 2.2rem);
+  margin-bottom: clamp(1rem, 3vh, 1.5rem);
   font-weight: bold;
+  color: #000;
+  text-align: center; /* タイトル中央揃え */
 }
 
 .home-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: 12px; /* タイル間の隙間を詰める */
+  width: 100%;
 }
 
 .home-card {
-  padding: 20px;
+  padding: 10px;
   border-radius: 12px;
   border: none;
-  aspect-ratio: 1 / 1;
+  /* 1画面に収まるよう高さを自動調整(vh) */
+  height: clamp(80px, 11vh, 120px); 
   display: flex;
-  align-items: flex-end;
+  align-items: center;
+  justify-content: center; /* 文字を中央揃え */
   cursor: pointer;
+  text-align: center;
+}
+
+.home-card-label {
+  color: #000; /* 文字色を黒に固定 */
   font-weight: bold;
-  font-size: 16px;
-  text-align: left;
+  font-size: 15px;
+  line-height: 1.3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .home-card-peach { background-color: #FFE5D9; }
