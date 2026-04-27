@@ -1,4 +1,3 @@
-/* src/components/Home.jsx */
 import './Home.css';
 
 const HOME_BUTTONS = [
@@ -11,21 +10,22 @@ const HOME_BUTTONS = [
   { key: 'output_sound_1', label: ['音声出力'], tone: 'blue' },
 ];
 
-const HomeScreen = ({ onNavigate }) => {
+function HomeScreen({ onNavigate }) {
   return (
     <div className="home-container">
       <h1 className="home-title">
         利用する機能を選択して<br />ください
       </h1>
       <div className="home-grid">
-        {HOME_BUTTONS.map((btn) => (
+        {HOME_BUTTONS.map((button) => (
           <button
-            key={btn.key}
-            className={`home-card home-card-${btn.tone}`}
-            onClick={() => onNavigate(btn.key)}
+            key={button.key}
+            className={`home-card home-card-${button.tone} ${button.key === 'soundcheck' ? 'home-card-offset' : ''}`}
+            type="button"
+            onClick={() => onNavigate(button.key)}
           >
             <div className="home-card-label">
-              {btn.label.map((line, index) => (
+              {button.label.map((line, index) => (
                 <span key={index}>{line}</span>
               ))}
             </div>
@@ -34,6 +34,6 @@ const HomeScreen = ({ onNavigate }) => {
       </div>
     </div>
   );
-};
+}
 
 export default HomeScreen;
