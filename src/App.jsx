@@ -40,43 +40,36 @@ function App() {
   const [isTestMode, setIsTestMode] = useState(false)
   const [currentScreen, setCurrentScreen] = useState('home')
   const [screenHistory, setScreenHistory] = useState([])
-  const [inputText, setInputText] = useState('')
+  const [practiceTextValue, setPracticeTextValue] = useState('')
+  const [inputTextValue, setInputTextValue] = useState('')
   const [isPracticeMicActive, setIsPracticeMicActive] = useState(false)
   const [isInputMicActive, setIsInputMicActive] = useState(false)
   const [isOutputTextChecked, setIsOutputTextChecked] = useState(false)
   const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false)
 
-  // キーボード高さを監視してスクロール位置を調整
+  const soundcheckAudioRef = useRef(null)
+  const outputSoundAudioRef = useRef(null)
+
+  // キーボード高さをCSS変数にセット（他のUIを崩さない最小限の処理）
   useEffect(() => {
     const handleViewportChange = () => {
-      if (!window.visualViewport) return
-      const vv = window.visualViewport
-      const offset = window.innerHeight - vv.height - vv.offsetTop
-      document.documentElement.style.setProperty('--keyboard-inset', `${Math.max(0, offset)}px`)
-      
-      // キーボード表示時に入力欄が隠れないように、少しスクロールさせる
-      if (offset > 0) {
-        window.scrollTo(0, offset)
-      }
-    }
-    window.visualViewport?.addEventListener('resize', handleViewportChange)
-    window.visualViewport?.addEventListener('scroll', handleViewportChange)
-    return () => {
-      window.visualViewport?.removeEventListener('resize', handleViewportChange)
-      window.visualViewport?.removeEventListener('scroll', handleViewportChange)
-    }
-  }, [])
+      if (!window.visualViewport) return;
+      const offset = window.innerHeight - window.visualViewport.height;
+      document.documentElement.style.setProperty('--keyboard-inset', `${Math.max(0, offset)}px`);
+    };
+    window.visualViewport?.addEventListener('resize', handleViewportChange);
+    return () => window.visualViewport?.removeEventListener('resize', handleViewportChange);
+  }, []);
 
-  const recordLog = (actionName, screenName = currentScreen, buttonName = '', val = '') => {
+  const recordLog = (actionName, screenName = currentScreen, buttonName = '', inputText = '') => {
     if (isTestMode) return
-    addLog({ subjectName, screenName, actionName, buttonName, inputText: val })
+    addLog({ subjectName, screenName, actionName, buttonName, inputText })
   }
 
   const navigateTo = (screenName) => {
     recordLog('画面遷移', screenName, screenName, '')
     setScreenHistory((prev) => [...prev, currentScreen])
     setCurrentScreen(screenName)
-    setInputText('')
   }
 
   const goBack = () => {
@@ -97,10 +90,11 @@ function App() {
     return <SubjectNameInput onStartExperiment={(n) => { setSubjectName(n); setIsExperimentStarted(true); }} onStartTestMode={() => { setIsTestMode(true); setIsExperimentStarted(true); }} />
   }
 
+  // ホーム画面（タイルレイアウトを尊重）
   if (currentScreen === 'home') {
     return (
-      <div className="screen-shell home-screen">
-        <h1 style={{ fontSize: '28px', marginBottom: '24px' }}>Home</h1>
+      <div className="app-shell home-screen">
+        <h1 className="home-title">Home</h1>
         <div className="home-grid">
           {HOME_BUTTONS.map((b) => (
             <button key={b.key} className={`home-card home-card-${b.tone} ${b.spacerBefore ? 'home-card-offset' : ''}`} onClick={() => navigateTo(b.key)}>
@@ -118,7 +112,7 @@ function App() {
   const imageSrc = isPractice ? practiceTextImage : inputTextImage
 
   return (
-    <div className="screen-shell">
+    <div className="app-shell">
       <header className="screen-header">
         <button className="header-icon-button" onClick={goBack}><img src={iconBack} alt="戻る" /></button>
         <h1 className="screen-title">{title}</h1>
@@ -126,33 +120,24 @@ function App() {
       </header>
 
       <main className="screen-main">
-        <div className="prompt-stack">
+        <section className="prompt-stack">
           <p className="screen-description">以下の文章をテキスト入力してください。</p>
           <div className="prompt-image-wrap"><img className="prompt-image" src={imageSrc} alt="" /></div>
           
-          {/* 入力欄を画像の下に配置 */}
-          <div className="input-container-wrapper">
+          {/* 画像のすぐ下に入力欄を配置 */}
+          <div className="screen-footer">
             {!isStep2 ? (
               <button className="bottom-input-box" onClick={() => navigateTo(currentScreen.replace('_1', '_2'))}>
                 <span>文章を入力</span>
               </button>
             ) : (
               <div className="bottom-input-row">
-                <input 
-                  className="bottom-input-field" 
-                  type="text" 
-                  placeholder="文章を入力" 
-                  autoFocus 
-                  value={inputText} 
-                  onChange={(e) => setInputText(e.target.value)} 
-                />
-                <button className="send-button" onClick={() => { recordLog('送信', currentScreen, '送信', inputText); goHome(); }}>
-                  <img src={iconSend} alt="送信" />
-                </button>
+                <input className="bottom-input-field" type="text" placeholder="文章を入力" autoFocus value={isPractice ? practiceTextValue : inputTextValue} onChange={(e) => isPractice ? setPracticeTextValue(e.target.value) : setInputTextValue(e.target.value)} />
+                <button className="send-button" onClick={() => { recordLog('送信', currentScreen, '送信', isPractice ? practiceTextValue : inputTextValue); isPractice ? setPracticeTextValue('') : setInputTextValue(''); goBack(); }}><img src={iconSend} alt="" /></button>
               </div>
             )}
           </div>
-        </div>
+        </section>
       </main>
     </div>
   )
