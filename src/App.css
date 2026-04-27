@@ -1,4 +1,4 @@
-/* --- 基本設定（既存のスタイルを尊重） --- */
+/* --- レイアウトの基本設定 --- */
 :root {
   --keyboard-inset: 0px;
 }
@@ -10,8 +10,7 @@ body, html, #root {
   height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: white;
-  /* キーボード表示時の挙動を安定させる */
-  overflow: hidden; 
+  overflow-x: hidden;
 }
 
 .app-shell {
@@ -21,7 +20,7 @@ body, html, #root {
   flex-direction: column;
 }
 
-/* --- ヘッダー（元のデザインを維持） --- */
+/* --- ヘッダー（既存デザイン維持） --- */
 .screen-header {
   display: flex;
   align-items: center;
@@ -35,10 +34,9 @@ body, html, #root {
 .header-icon-button {
   background: #e4e4e4;
   border: none;
-  padding: 8px;
-  border-radius: 50%;
   width: 40px;
   height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -56,16 +54,14 @@ body, html, #root {
   margin: 0;
 }
 
-/* --- メイン領域（画像と入力欄を縦に並べる） --- */
+/* --- メインコンテンツ領域 --- */
 .screen-main {
   flex: 1;
   display: flex;
   flex-direction: column;
   padding: 20px;
-  overflow-y: auto; /* コンテンツが多い場合のみスクロール */
+  overflow-y: auto;
   align-items: center;
-  /* キーボード分の余白を下に追加 */
-  padding-bottom: calc(var(--keyboard-inset) + 20px);
 }
 
 .prompt-stack {
@@ -74,6 +70,7 @@ body, html, #root {
   gap: 16px;
   align-items: center;
   width: 100%;
+  max-width: 400px;
 }
 
 .screen-description {
@@ -85,8 +82,7 @@ body, html, #root {
 
 .prompt-image-wrap {
   width: 100%;
-  max-width: 380px;
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
 .prompt-image {
@@ -95,34 +91,28 @@ body, html, #root {
   object-fit: contain;
 }
 
-/* --- 入力欄（画像の下に自然に配置） --- */
+/* --- フッター要素（入力欄・ボタン） --- */
 .screen-footer {
   width: 100%;
-  max-width: 400px;
-  margin-top: 2px;
+  margin-top: 10px;
+  /* キーボード表示時に画像の下に留まるよう、paddingで調整 */
+  padding-bottom: var(--keyboard-inset);
 }
 
 .bottom-input-box, .bottom-input-row {
   width: 100%;
   min-height: 54px;
   background-color: #f4f4f4;
-  border: none;
   border-radius: 12px;
-  padding: 12px 16px;
+  padding: 0 16px;
   display: flex;
   align-items: center;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
 
-.bottom-input-box span {
-  color: #999;
-  font-size: 16px;
-}
-
 .bottom-input-field {
   flex: 1;
-  padding: 0;
-  background-color: transparent;
+  background: transparent;
   border: none;
   font-size: 16px;
   outline: none;
@@ -132,18 +122,32 @@ body, html, #root {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px;
 }
 
 .send-button img {
   width: 28px;
-  height: 28px;
+}
+
+/* 丸いアクションボタン（音声・出力用） */
+.round-action-button {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+  cursor: pointer;
+}
+
+.round-action-button img {
+  width: 30px;
 }
 
 /* --- ホーム画面（元のタイルレイアウトを完全復元） --- */
 .home-screen {
   padding: 20px;
-  overflow-y: auto;
 }
 
 .home-title {
@@ -174,21 +178,3 @@ body, html, #root {
 .home-card-peach { background-color: #FFE5D9; }
 .home-card-blue { background-color: #D8E2DC; }
 .home-card-offset { grid-column: 1 / 2; }
-
-.home-card-label {
-  display: flex;
-  flex-direction: column;
-}
-
-/* 丸いボタン（音声・出力画面用） */
-.round-action-button {
-  width: 64px;
-  height: 64px;
-  border-radius: 50%;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px auto;
-  cursor: pointer;
-}
