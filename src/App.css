@@ -7,10 +7,10 @@ body, html, #root {
   margin: 0;
   padding: 0;
   width: 100%;
-  height: 100svh; /* 画面高さ一杯に固定 */
+  height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: white;
-  overflow: hidden; /* Home画面がはみ出さないように */
+  overflow-x: hidden;
 }
 
 .app-shell {
@@ -20,71 +20,41 @@ body, html, #root {
   flex-direction: column;
 }
 
-/* --- ホーム画面（タイルレイアウト調整） --- */
-.home-screen {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.home-title {
-  font-size: 24px;
-  margin-bottom: 15px;
-  font-weight: bold;
-  color: #000;
-  text-align: center; /* タイトルも中央 */
-}
-
-.home-grid {
-  flex: 1; /* 余白を埋める */
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  /* 5行分。1画面に収まるよう自動調整 */
-  grid-template-rows: repeat(5, minmax(0, 1fr)); 
-  gap: 12px;
-  margin-bottom: 10px;
-}
-
-.home-card {
-  padding: 10px;
-  border-radius: 16px;
-  border: none;
-  display: flex;
-  align-items: center;
-  justify-content: center; /* 文字を中央揃え */
-  cursor: pointer;
-  transition: opacity 0.2s;
-}
-
-.home-card:active {
-  opacity: 0.7;
-}
-
-.home-card-peach { background-color: #f9d9bf; }
-.home-card-blue { background-color: #bcd3f3; }
-.home-card-offset { grid-column: 1 / 2; } /* 音声チェックを左側に寄せる */
-
-.home-card-label {
-  display: flex;
-  flex-direction: column;
-  color: #000; /* 文字色を黒に固定 */
-  font-weight: bold;
-  font-size: clamp(14px, 4vw, 18px);
-  line-height: 1.2;
-  text-align: center;
-}
-
-/* --- コンテンツ画面 --- */
+/* --- ヘッダー（既存デザイン維持） --- */
 .screen-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 10px 16px;
+  background-color: #fff;
   border-bottom: 1px solid #eee;
+  flex-shrink: 0;
 }
 
+.header-icon-button {
+  background: #e4e4e4;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.header-icon-button img {
+  width: 20px;
+  height: 20px;
+}
+
+.screen-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* --- メインコンテンツ領域 --- */
 .screen-main {
   flex: 1;
   display: flex;
@@ -95,24 +65,73 @@ body, html, #root {
 }
 
 .prompt-stack {
-  width: 100%;
-  max-width: 400px;
   display: flex;
   flex-direction: column;
-  align-items: center;
   gap: 16px;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+}
+
+.screen-description {
+  font-size: 16px;
+  color: #333;
+  margin: 0;
+  text-align: center;
+}
+
+.prompt-image-wrap {
+  width: 100%;
+  margin-bottom: 10px;
 }
 
 .prompt-image {
   width: 100%;
   height: auto;
-  border-radius: 8px;
+  object-fit: contain;
 }
 
-/* 丸いアクションボタン */
+/* --- フッター要素（入力欄・ボタン） --- */
+.screen-footer {
+  width: 100%;
+  margin-top: 10px;
+  /* キーボード表示時に画像の下に留まるよう、paddingで調整 */
+  padding-bottom: var(--keyboard-inset);
+}
+
+.bottom-input-box, .bottom-input-row {
+  width: 100%;
+  min-height: 54px;
+  background-color: #f4f4f4;
+  border-radius: 12px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.bottom-input-field {
+  flex: 1;
+  background: transparent;
+  border: none;
+  font-size: 16px;
+  outline: none;
+}
+
+.send-button {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.send-button img {
+  width: 28px;
+}
+
+/* 丸いアクションボタン（音声・出力用） */
 .round-action-button {
-  width: 72px;
-  height: 72px;
+  width: 64px;
+  height: 64px;
   border-radius: 50%;
   border: none;
   display: flex;
@@ -120,9 +139,42 @@ body, html, #root {
   justify-content: center;
   margin: 20px auto;
   cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
 .round-action-button img {
-  width: 32px;
+  width: 30px;
 }
+
+/* --- ホーム画面（元のタイルレイアウトを完全復元） --- */
+.home-screen {
+  padding: 20px;
+}
+
+.home-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+  font-weight: bold;
+}
+
+.home-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.home-card {
+  padding: 20px;
+  border-radius: 12px;
+  border: none;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: flex-end;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 16px;
+  text-align: left;
+}
+
+.home-card-peach { background-color: #FFE5D9; }
+.home-card-blue { background-color: #D8E2DC; }
+.home-card-offset { grid-column: 1 / 2; }
