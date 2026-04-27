@@ -50,7 +50,6 @@ function App() {
   const soundcheckAudioRef = useRef(null)
   const outputSoundAudioRef = useRef(null)
 
-  // キーボード高さをCSS変数にセット（他のUIを崩さない最小限の処理）
   useEffect(() => {
     const handleViewportChange = () => {
       if (!window.visualViewport) return;
@@ -90,7 +89,7 @@ function App() {
     return <SubjectNameInput onStartExperiment={(n) => { setSubjectName(n); setIsExperimentStarted(true); }} onStartTestMode={() => { setIsTestMode(true); setIsExperimentStarted(true); }} />
   }
 
-  // ホーム画面（タイルレイアウトを尊重）
+  // ホーム画面
   if (currentScreen === 'home') {
     return (
       <div className="app-shell home-screen">
@@ -106,35 +105,85 @@ function App() {
     )
   }
 
-  const isStep2 = currentScreen.endsWith('_2')
-  const isPractice = currentScreen.startsWith('practice')
-  const title = SCREEN_TITLES[currentScreen]
-  const imageSrc = isPractice ? practiceTextImage : inputTextImage
+  // コンテンツの判定
+  const isPractice = currentScreen.startsWith('practice');
+  const isTextType = currentScreen.includes('text');
+  const isSoundType = currentScreen.includes('sound') || currentScreen === 'soundcheck';
+  const isStep2 = currentScreen.endsWith('_2');
+
+  // 画像の選択
+  let imageSrc = null;
+  if (currentScreen.includes('practice_text')) imageSrc = practiceTextImage;
+  else if (currentScreen.includes('input_text')) imageSrc = inputTextImage;
+  else if (currentScreen.includes('output_text')) imageSrc = outputTextImage;
+  else if (currentScreen.includes('practice_sound')) imageSrc = practiceTextImage;
+  else if (currentScreen.includes('input_sound')) imageSrc = inputTextImage;
 
   return (
     <div className="app-shell">
       <header className="screen-header">
         <button className="header-icon-button" onClick={goBack}><img src={iconBack} alt="戻る" /></button>
-        <h1 className="screen-title">{title}</h1>
+        <h1 className="screen-title">{SCREEN_TITLES[currentScreen]}</h1>
         <button className="header-icon-button" onClick={goHome}><img src={iconHome} alt="ホーム" /></button>
       </header>
 
       <main className="screen-main">
         <section className="prompt-stack">
-          <p className="screen-description">以下の文章をテキスト入力してください。</p>
-          <div className="prompt-image-wrap"><img className="prompt-image" src={imageSrc} alt="" /></div>
-          
-          {/* 画像のすぐ下に入力欄を配置 */}
+          {/* 説明文の表示 */}
+          {!currentScreen.includes('output') && !currentScreen.includes('soundcheck') && (
+            <p className="screen-description">以下の文章を{isTextType ? 'テキスト' : '音声'}入力してください。</p>
+          )}
+          {currentScreen === 'soundcheck' && <p className="screen-description">聞きやすい音量に調節してください。</p>}
+          {currentScreen === 'output_sound_1' && <p className="screen-description">以下のボタンを押して、音声を聞いてください。</p>}
+
+          {/* 画像の表示 */}
+          {imageSrc && (
+            <div className="prompt-image-wrap"><img className="prompt-image" src={imageSrc} alt="" /></div>
+          )}
+
+          {/* フッター要素（必要なものだけを出す） */}
           <div className="screen-footer">
-            {!isStep2 ? (
-              <button className="bottom-input-box" onClick={() => navigateTo(currentScreen.replace('_1', '_2'))}>
-                <span>文章を入力</span>
+            {/* テキスト入力画面の場合 */}
+            {isTextType && !currentScreen.includes('output') && (
+              !isStep2 ? (
+                <button className="bottom-input-box" onClick={() => navigateTo(currentScreen.replace('_1', '_2'))}>
+                  <span>文章を入力</span>
+                </button>
+              ) : (
+                <div className="bottom-input-row">
+                  <input className="bottom-input-field" type="text" placeholder="文章を入力" autoFocus value={isPractice ? practiceTextValue : inputTextValue} onChange={(e) => isPractice ? setPracticeTextValue(e.target.value) : setInputTextValue(e.target.value)} />
+                  <button className="send-button" onClick={() => { recordLog('送信', currentScreen, '送信', isPractice ? practiceTextValue : inputTextValue); isPractice ? setPracticeTextValue('') : setInputTextValue(''); goBack(); }}><img src={iconSend} alt="" /></button>
+                </div>
+              )
+            )}
+
+            {/* 音声入力画面の場合 */}
+            {isSoundType && currentScreen.includes('practice_sound') && (
+              <button className="round-action-button" style={{backgroundColor: '#F4F4F4'}} onClick={() => setIsPracticeMicActive(!isPracticeMicActive)}>
+                <img src={isPracticeMicActive ? iconMic : iconMute} alt="マイク" />
               </button>
-            ) : (
-              <div className="bottom-input-row">
-                <input className="bottom-input-field" type="text" placeholder="文章を入力" autoFocus value={isPractice ? practiceTextValue : inputTextValue} onChange={(e) => isPractice ? setPracticeTextValue(e.target.value) : setInputTextValue(e.target.value)} />
-                <button className="send-button" onClick={() => { recordLog('送信', currentScreen, '送信', isPractice ? practiceTextValue : inputTextValue); isPractice ? setPracticeTextValue('') : setInputTextValue(''); goBack(); }}><img src={iconSend} alt="" /></button>
-              </div>
+            )}
+            {isSoundType && currentScreen.includes('input_sound') && (
+              <button className="round-action-button" style={{backgroundColor: isInputMicActive ? '#F4F4F4' : '#E5E5E5'}} onClick={() => setIsInputMicActive(!isInputMicActive)}>
+                <img src={isInputMicActive ? iconMic : iconMute} alt="マイク" />
+              </button>
+            )}
+
+            {/* 出力・チェック画面の場合 */}
+            {currentScreen === 'output_text_1' && (
+              <button className="round-action-button" style={{backgroundColor: isOutputTextChecked ? '#FA6400' : '#F4F4F4'}} onClick={() => setIsOutputTextChecked(!isOutputTextChecked)}>
+                <img src={isOutputTextChecked ? iconCheckWhite : iconCheckBlack} alt="チェック" />
+              </button>
+            )}
+            {currentScreen === 'soundcheck' && (
+              <button className="round-action-button" style={{backgroundColor: '#FA6400'}} onClick={() => {}}>
+                <img src={iconPlayWhite} alt="再生" />
+              </button>
+            )}
+            {currentScreen === 'output_sound_1' && (
+              <button className="round-action-button" style={{backgroundColor: isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}} onClick={() => setIsOutputSoundPlaying(!isOutputSoundPlaying)}>
+                <img src={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack} alt="再生" />
+              </button>
             )}
           </div>
         </section>
