@@ -47,8 +47,60 @@ function App() {
   const [isOutputTextChecked, setIsOutputTextChecked] = useState(false)
   const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false)
 
-  const soundcheckAudioRef = useRef(null)
-  const outputSoundAudioRef = useRef(null)
+// --- 音声再生用のStateとRefを追加 ---
+const soundcheckAudioRef = useRef(null);
+const outputSoundAudioRef = useRef(null);
+const [isOutputSoundPlaying, setIsOutputSoundPlaying] = useState(false);
+
+// 再生関数
+const playSoundcheck = () => {
+  if (soundcheckAudioRef.current) {
+    soundcheckAudioRef.current.currentTime = 0;
+    soundcheckAudioRef.current.play();
+  }
+};
+
+const playOutputSound = () => {
+  if (outputSoundAudioRef.current) {
+    if (isOutputSoundPlaying) {
+      outputSoundAudioRef.current.pause();
+      setIsOutputSoundPlaying(false);
+    } else {
+      outputSoundAudioRef.current.currentTime = 0;
+      outputSoundAudioRef.current.play();
+      setIsOutputSoundPlaying(true);
+    }
+  }
+};
+
+// --- JSX内のオーディオタグとボタンへの紐付け ---
+return (
+  <div className="app-shell">
+    {/* 音声ファイルを隠し要素として配置 */}
+    <audio ref={soundcheckAudioRef} src={soundcheckAudioFile} />
+    <audio 
+      ref={outputSoundAudioRef} 
+      src={outputSoundAudioFile} 
+      onEnded={() => setIsOutputSoundPlaying(false)} 
+    />
+
+    {/* ...中略（レンダリング部分）... */}
+
+    {/* soundcheck画面のボタン */}
+    {currentScreen === 'soundcheck' && (
+      <button className="round-action-button" style={{backgroundColor: '#FA6400'}} onClick={playSoundcheck}>
+        <img src={iconPlayWhite} alt="再生" />
+      </button>
+    )}
+
+    {/* output_sound_1画面のボタン */}
+    {currentScreen === 'output_sound_1' && (
+      <button className="round-action-button" style={{backgroundColor: isOutputSoundPlaying ? '#FA6400' : '#F4F4F4'}} onClick={playOutputSound}>
+        <img src={isOutputSoundPlaying ? iconPlayWhite : iconPlayBlack} alt="再生" />
+      </button>
+    )}
+  </div>
+);
 
   useEffect(() => {
     const handleViewportChange = () => {
