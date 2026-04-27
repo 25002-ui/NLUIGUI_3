@@ -21,20 +21,15 @@
   flex-direction: column;
   gap: clamp(16px, 3vw, 24px);
   align-items: center;
-  background-color: #F4F4F4; /* step 0, 1 の背景色 */
+  background-color: #F4F4F4; /* 初期状態のグレー */
   padding: clamp(12px, 3vw, 16px);
   border-radius: clamp(12px, 3vw, 16px);
   transition: background-color 0.2s ease-in-out;
-  min-height: 200px;
+  min-height: 200px; /* 画像がない時の極端な縮みを防ぐ */
 }
 
-/* step 2 の状態 */
-.screen-content.state-orange {
-  background-color: #FA6400; /* オレンジ背景 */
-}
-
-.screen-content.state-orange .output-text {
-  color: #ffffff; /* オレンジ背景時は白文字 */
+.screen-content.checked {
+  background-color: #FA6400; /* ボタン押下後のオレンジ */
 }
 
 .content-image {
@@ -44,6 +39,7 @@
   max-width: 100%;
 }
 
+/* 画像表示時のふわっとしたアニメーション（任意） */
 .fade-in {
   animation: fadeIn 0.3s ease-in-out;
 }
@@ -60,7 +56,12 @@
   line-height: 1.8;
   word-break: break-word;
   width: 100%;
+  /* 背景がオレンジになった時に文字を読みやすくする場合 */
   transition: color 0.2s;
+}
+
+.screen-content.checked .output-text {
+  color: #ffffff; /* オレンジ背景時は白文字にすると視認性が上がります */
 }
 
 .check-button-container {
@@ -70,37 +71,37 @@
   margin-top: clamp(16px, 4vw, 32px);
 }
 
-/* step 0 用：表示ボタン */
-.text-display-button {
-  background-color: #ffffff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 8px 32px;
-  font-size: 16px;
-  font-weight: bold;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-}
-
-/* step 1, 2 用：チェックボタン */
 .check-button {
   width: clamp(80px, 20vw, 120px);
   height: clamp(80px, 20vw, 120px);
   border: none;
   background-color: transparent;
+  border-radius: 50%;
   cursor: pointer;
   padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: transform 0.2s;
+}
+
+.check-button:active {
+  transform: scale(0.95);
 }
 
 .check-button img {
-  width: 100%;
-  height: 100%;
+  width: clamp(40px, 10vw, 60px);
+  height: clamp(40px, 10vw, 60px);
   object-fit: contain;
 }
 
-.check-button:active, .text-display-button:active {
-  transform: scale(0.95);
+@media (max-width: 380px) {
+  .screen-container {
+    padding: 12px;
+    padding-top: 16px;
+  }
+
+  .screen-content {
+    gap: 16px;
+  }
 }
