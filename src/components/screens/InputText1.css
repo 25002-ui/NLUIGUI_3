@@ -1,47 +1,59 @@
 .screen-container {
-  display: flex;
-  justify-content: center;
-  align-items: center; /* flex-start から center に変更 */
-  height: 100dvh;      /* 100vh ではなく 100dvh (動的ビューポート) */
-  overflow: hidden;    /* 画面自体のスクロールを止める */
+  display: block; /* Flexを解除し、上からの順序配置にする */
+  width: 100%;
+  min-height: 100dvh;
+  background-color: #ffffff;
+  overflow-y: auto; /* 万が一の時はスクロールを許可 */
 }
 
 .screen-wrapper {
   width: 100%;
   max-width: 430px;
-  background-color: #ffffff;
+  margin: 0 auto;
 }
 
 .screen-content {
   display: flex;
   flex-direction: column;
-  align-items: center; /* 要素を中央に揃える */
-  width: 100%;
-  /* 塊として動くように、上下の余白を自動調整にする */
-  margin: auto 0; 
+  align-items: center;
+  padding: 20px 16px;
 }
 
-/* 画像とボタンを密着させ、一つの塊として扱う */
+/* 画像とボタンを密着させるユニット */
 .image-button-unit {
   display: flex;
   flex-direction: column;
   align-items: center;
   width: 100%;
+  margin-bottom: 20px; /* 説明文との距離 */
 }
 
 .content-image {
-  display: block; /* 下の隙間を消す */
+  display: block; /* 下の隙間を排除 */
   width: 100%;
   height: auto;
+  object-fit: contain;
 }
 
 .text-input-box {
-  margin-top: 5px; /* 画像との距離を固定 */
+  margin-top: 5px; /* 画像から5px空けて固定 */
   width: 100%;
+  background-color: #E8E8E8;
+  border: none;
+  border-radius: clamp(12px, 3vw, 16px);
+  padding: clamp(14px, 3vw, 20px);
+  font-size: clamp(14px, 3.5vw, 16px);
+  color: #999;
+  cursor: pointer;
+  text-align: left;
+  min-height: clamp(50px, 12vw, 70px);
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
 }
 
-/* 説明文が原因で押し上げられないよう、マージンを調整 */
 .description {
-  margin-top: 20px;
+  font-size: clamp(14px, 3.5vw, 16px);
+  color: #333;
   text-align: center;
 }
