@@ -6,7 +6,7 @@ export default function InputText1({ image, onSend, goBack, goHome }) {
   const [inputText, setInputText] = useState('')
 
   const handleSend = () => {
-    if (onSend) {
+    if (onSend && inputText.trim() !== '') {
       onSend(inputText)
       setInputText('')
     }
@@ -18,16 +18,29 @@ export default function InputText1({ image, onSend, goBack, goHome }) {
         <ScreenHeader title="テキスト入力" onBack={goBack} onHome={goHome} />
 
         <div className="screen-content">
-          {/* 理想のUI：画像と入力ボックスを完全にセットにする */}
-          <div className="image-input-group">
+          {/* 画像と入力エリアを密着させたグループ */}
+          <div className="input-group-unit">
             <img 
               src={image || "/material/input_text.png"} 
-              alt="Input Instruction" 
+              alt="Instruction" 
               className="content-image" 
             />
-            <button className="text-input-box" onClick={handleSend}>
-              <span className="input-placeholder">文章を入力</span>
-            </button>
+            
+            <div className="input-field-row">
+              {/* 本物の入力フォームに変更 */}
+              <input 
+                type="text"
+                className="real-text-input"
+                placeholder="文章を入力"
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+              />
+              
+              {/* 送信ボタン (material/icon_send.png) */}
+              <button className="send-action-button" onClick={handleSend}>
+                <img src="/material/icon_send.png" alt="送信" />
+              </button>
+            </div>
           </div>
 
           <div className="description">
