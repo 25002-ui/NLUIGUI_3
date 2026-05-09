@@ -1,38 +1,42 @@
 .screen-container {
-  display: block; /* Flexを解除し、上からの順序配置にする */
+  display: block; /* Flexを解除し、自然な上からの並びにする */
   width: 100%;
   min-height: 100dvh;
   background-color: #ffffff;
-  overflow-y: auto; /* 万が一の時はスクロールを許可 */
+  overflow-y: auto;
+  box-sizing: border-box;
 }
 
 .screen-wrapper {
   width: 100%;
   max-width: 430px;
   margin: 0 auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .screen-content {
+  padding: 0 16px; /* 左右の余白をReferenceに合わせる */
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 20px 16px;
 }
 
-/* 画像とボタンを密着させるユニット */
-.image-button-unit {
+/* 変更の肝：画像とボックスを密着させ、一つのパーツにする */
+.image-input-group {
+  width: 100%;
+  margin-top: 24px; /* ヘッダーからの距離 */
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: 100%;
-  margin-bottom: 20px; /* 説明文との距離 */
 }
 
 .content-image {
-  display: block; /* 下の隙間を排除 */
+  display: block;
   width: 100%;
   height: auto;
   object-fit: contain;
+  margin: 0;
 }
 
 .text-input-box {
@@ -40,20 +44,25 @@
   width: 100%;
   background-color: #E8E8E8;
   border: none;
-  border-radius: clamp(12px, 3vw, 16px);
-  padding: clamp(14px, 3vw, 20px);
-  font-size: clamp(14px, 3.5vw, 16px);
+  border-radius: 16px; /* 丸みは固定値の方がReferenceに近い */
+  padding: 18px 20px;
+  font-size: 16px;
   color: #999;
   cursor: pointer;
   text-align: left;
-  min-height: clamp(50px, 12vw, 70px);
+  min-height: 60px;
   display: flex;
   align-items: center;
   box-sizing: border-box;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05); /* わずかな影でボタン感を出す */
 }
 
 .description {
-  font-size: clamp(14px, 3.5vw, 16px);
+  margin-top: 32px; /* 画像セットからの十分な距離 */
+  font-size: 15px;
   color: #333;
-  text-align: center;
+  line-height: 1.6;
+  text-align: left; /* Referenceに基づき左寄せ */
+  width: 100%;
+  font-weight: 500;
 }
