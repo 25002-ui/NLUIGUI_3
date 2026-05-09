@@ -18,17 +18,26 @@
 .screen-content {
   display: flex;
   flex-direction: column;
-  gap: 0;
+  align-items: center; /* 要素を中央に揃える */
+  width: 100%;
+  /* 塊として動くように、上下の余白を自動調整にする */
+  margin: auto 0; 
 }
 
 .content-image {
+  display: block; /* 必須：インライン要素の隙間を消す */
   width: 100%;
+  max-width: 100%;
   height: auto;
   object-fit: contain;
 }
 
 .text-input-box {
-  margin-top: 5px; /* 画像から5px空けて固定 */
+  width: 100%; /* 横幅を画像と合わせる */
+  box-sizing: border-box; /* パディングを含めたサイズ計算 */
+  margin-top: 5px; /* ここで画像との距離を固定 */
+  
+  /* 以下は既存のスタイルを維持 */
   background-color: #E8E8E8;
   border: none;
   border-radius: clamp(12px, 3vw, 16px);
@@ -36,12 +45,9 @@
   font-size: clamp(14px, 3.5vw, 16px);
   color: #999;
   cursor: pointer;
-  text-align: left;
   min-height: clamp(50px, 12vw, 70px);
   display: flex;
   align-items: center;
-                         /* クリック時の枠線を消す */
- 
 }
 
 
