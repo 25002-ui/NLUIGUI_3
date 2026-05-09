@@ -1,12 +1,9 @@
 .screen-container {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
-  min-height: 100vh;
-  background-color: #ffffff;
-  padding: clamp(12px, 3vw, 16px);
-  padding-top: clamp(16px, 4vw, 24px);
-  font-family: 'Noto Sans CJK JP', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  align-items: center; /* flex-start から center に変更 */
+  height: 100dvh;      /* 100vh ではなく 100dvh (動的ビューポート) */
+  overflow: hidden;    /* 画面自体のスクロールを止める */
 }
 
 .screen-wrapper {
