@@ -18,11 +18,11 @@ export default function InputText1({ image, onSend, goBack, goHome }) {
         <ScreenHeader title="テキスト入力" onBack={goBack} onHome={goHome} />
 
         <div className="screen-content">
-          {/* 画像とボタンを一つのユニットに固定 */}
-          <div className="image-button-unit">
+          {/* 理想のUI：画像と入力ボックスを完全にセットにする */}
+          <div className="image-input-group">
             <img 
               src={image || "/material/input_text.png"} 
-              alt="Input Text" 
+              alt="Input Instruction" 
               className="content-image" 
             />
             <button className="text-input-box" onClick={handleSend}>
