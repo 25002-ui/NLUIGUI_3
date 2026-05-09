@@ -40,6 +40,21 @@
   min-height: clamp(50px, 12vw, 70px);
   display: flex;
   align-items: center;
+
+  /* 既存のコードに追加 */
+  -webkit-tap-highlight-color: transparent; /* タップ時のハイライトを消す(iOS) */
+  outline: none;                            /* クリック時の枠線を消す */
+  user-select: none;                       /* テキスト選択を防ぐ */
+  transform: translateZ(0);                 /* GPUレンダリングを強制してガタつき防止 */
+  
+  /* ボタン特有の挙動をリセット */
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.text-input-box:active {
+  margin-top: 5px; /* マージンを固定 */
+  transform: scale(1); /* 勝手に沈み込むのを防ぐ */
 }
 
 .description {
