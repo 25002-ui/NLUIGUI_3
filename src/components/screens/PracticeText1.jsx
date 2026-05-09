@@ -1,11 +1,11 @@
-import React from 'react';
-import ScreenHeader from '../ScreenHeader';
-import './PracticeText1.css';
+import { useState } from 'react'
+import './PracticeText1.css'
+import ScreenHeader from '../ScreenHeader'
 
-const PracticeText1 = ({ navigateTo, goBack, goHome }) => {
+export default function PracticeText1({ navigateTo, goBack, goHome }) {
   const handleInputClick = () => {
-    navigateTo('practice_text_2');
-  };
+    navigateTo('practice_text_2')
+  }
 
   return (
     <div className="screen-container">
@@ -30,7 +30,5 @@ const PracticeText1 = ({ navigateTo, goBack, goHome }) => {
         </div>
       </div>
     </div>
-  );
-};
-
-export default PracticeText1;
+  )
+}
