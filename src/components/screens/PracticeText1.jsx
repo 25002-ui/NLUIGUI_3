@@ -10,12 +10,13 @@ export default function PracticeText1({ navigateTo, goBack, goHome }) {
   return (
     <div className="screen-container">
       <div className="screen-wrapper">
+        {/* ScreenHeaderを導入 */}
         <ScreenHeader title="練習 テキスト入力" onBack={goBack} onHome={goHome} />
 
         <div className="screen-content">
           <img src="/material/practice_text.png" alt="Practice Text" className="content-image" />
 
-          {/* 修正：画像のすぐ下にテキストボックスを配置 */}
+          {/* 画像のすぐ下にボタンを配置 */}
           <button className="text-input-box" onClick={handleInputClick}>
             <span className="input-placeholder">文章を入力</span>
           </button>
