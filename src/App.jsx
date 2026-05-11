@@ -4,6 +4,7 @@ import SubjectNameInput from './components/SubjectNameInput'
 import iconBack from '../material/icon_back.png'
 import iconHome from '../material/icon_home.png'
 import iconSend from '../material/icon_send.png'
+import iconSendWhite from './material/icon_send_white.png'
 import iconMute from '../material/icon_mute.png'
 import iconMic from '../material/icon_mic.png'
 import iconCheckBlack from '../material/icon_check_black.png'
@@ -209,7 +210,10 @@ function InputComposer({
       className={`send-button ${isSent ? 'is-sent' : ''}`}
       onClick={onSend}
     >     
-      <img src={iconSend} alt="送信" />
+        <img
+          src={isSent ? iconSendWhite : iconSend}
+          alt="送信"
+        />
     </button>
   </div>
 )
@@ -491,6 +495,7 @@ const recordLog = (
 
   const handlePracticeTextSend = () => {
     setPracticeTextSent(true)
+    setPracticeTextValue('')
   recordLog(
     '送信時全文ログ',
     'practice_text_1',
@@ -506,6 +511,7 @@ const recordLog = (
 
   const handleInputTextSend = () => {
     setInputTextSent(true)
+    setInputTextValue('')
   recordLog(
     '送信時全文ログ',
     'input_text_1',
