@@ -110,6 +110,7 @@ function InputLauncher({ onClick }) {
 
 function InputComposer({ value, onChange, onSend, onTextInputLog }) {
   const isComposingRef = useRef(false)
+  const compositionStartValueRef = useRef('')
 
   const handleFocus = () => {
     window.requestAnimationFrame(() => {
@@ -117,56 +118,92 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
     })
   }
 
-  const logInsertedText = (text, inputType, target) => {
-    if (!text || !onTextInputLog) {
+  const logTextDiff = (beforeText, afterText, inputType) => {
+    if (!onTextInputLog || beforeText === afterText) {
       return
     }
 
-    const chars = Array.from(text)
-    const endPosition = target.selectionStart ?? target.value.length
-    const startPosition = Math.max(0, endPosition - chars.length)
+    let start = 0
+    while (
+      start < beforeText.length &&
+      start < afterText.length &&
+      beforeText[start] === afterText[start]
+    ) {
+      start += 1
+    }
 
-    chars.forEach((char, index) => {
-      onTextInputLog({
-        inputChar: char,
-        inputType,
-        charIndex: startPosition + index,
-        afterText: target.value,
+    let beforeEnd = beforeText.length - 1
+    let afterEnd = afterText.length - 1
+
+    while (
+      beforeEnd >= start &&
+      afterEnd >= start &&
+      beforeText[beforeEnd] === afterText[afterEnd]
+    ) {
+      beforeEnd -= 1
+      afterEnd -= 1
+    }
+
+    const addedText = afterText.slice(start, afterEnd + 1)
+    const removedText = beforeText.slice(start, beforeEnd + 1)
+
+    if (addedText) {
+      Array.from(addedText).forEach((char, index) => {
+        onTextInputLog({
+          inputChar: char,
+          inputType,
+          charIndex: start + index,
+          beforeText,
+          afterText,
+        })
       })
-    })
+      return
+    }
+
+    if (removedText) {
+      Array.from(removedText).forEach((char, index) => {
+        onTextInputLog({
+          inputChar: char,
+          inputType: 'deleteContent',
+          charIndex: start + index,
+          beforeText,
+          afterText,
+        })
+      })
+    }
   }
 
-  const handleInput = (event) => {
-    const nativeEvent = event.nativeEvent
+  const handleChange = (event) => {
+    const nextValue = event.target.value
 
-    if (isComposingRef.current) {
-      return
+    if (!isComposingRef.current) {
+      logTextDiff(value, nextValue, 'insertText')
     }
 
-    if (
-      nativeEvent.inputType &&
-      nativeEvent.inputType.startsWith('insert') &&
-      nativeEvent.data
-    ) {
-      logInsertedText(nativeEvent.data, nativeEvent.inputType, event.target)
-    }
+    onChange(nextValue)
   }
 
   const handleCompositionStart = () => {
     isComposingRef.current = true
+    compositionStartValueRef.current = value
   }
 
   const handleCompositionEnd = (event) => {
     isComposingRef.current = false
-    logInsertedText(event.nativeEvent.data, 'insertCompositionText', event.target)
+    const nextValue = event.target.value
+
+    logTextDiff(
+      compositionStartValueRef.current,
+      nextValue,
+      'insertCompositionText'
+    )
   }
 
   return (
     <div className="input-composer">
       <textarea
         value={value}
-        onChange={(event) => onChange(event.target.value)}
-        onInput={handleInput}
+        onChange={handleChange}
         onCompositionStart={handleCompositionStart}
         onCompositionEnd={handleCompositionEnd}
         onFocus={handleFocus}
@@ -269,7 +306,6 @@ const recordLog = (
     ...extraData,
   })
 }
-
   const handleStartExperiment = (name) => {
     setSubjectName(name)
     setIsTestMode(false)
@@ -545,15 +581,15 @@ const recordLog = (
               onChange={setPracticeTextValue}
               onSend={handlePracticeTextSend}
               onTextInputLog={(data) =>
-              recordLog(
-                '文字入力',
-                'practice_text_2',
-                'テキストボックス',
-                data.afterText,
-                data
-              )
-            }
-          />
+                recordLog(
+                  '文字入力',
+                  'practice_text_2',
+                  'テキストボックス',
+                  data.afterText,
+                  data
+                )
+              }
+            />
         )
 
       case 'input_text_1':
