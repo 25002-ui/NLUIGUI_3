@@ -308,7 +308,7 @@ body, html, #root {
   box-shadow: 0 0.28rem 0.8rem rgba(0, 0, 0, 0.08);
   padding: clamp(0.72rem, 2.5vw, 0.9rem) clamp(0.95rem, 3.5vw, 1.2rem);
   font-family: inherit;
-  font-size: clamp(0.92rem, 3.6vw, 1.02rem);
+  font-size: 16px;
   color: #000;
   outline: none;
   resize: none;
