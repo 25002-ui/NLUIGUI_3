@@ -574,7 +574,9 @@ const recordLog = (
                 )
               }
             />
-        )
+          }
+          />
+          )
 
       case 'input_text_1':
         return (
@@ -611,10 +613,12 @@ const recordLog = (
                     'テキストボックス',
                     data.afterText,
                     data
-                  )
-                }
-              />
-        )
+                )
+              }
+            />
+          }
+          />
+          )
 
       case 'practice_sound_1':
         return (
