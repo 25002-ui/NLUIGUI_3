@@ -48,25 +48,15 @@ function createLogEntry(logData) {
   const currentTime = new Date()
 
   return {
-    id: `${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
     被験者名: logData.subjectName || '',
     画面名: logData.screenName || '',
     操作名: logData.actionName || '',
     ボタン名: logData.buttonName || '',
-    入力テキスト: logData.inputText || '',
-
     入力文字: logData.inputChar || '',
-    入力種別: logData.inputType || '',
-    文字位置: logData.charIndex ?? '',
-    入力前テキスト: logData.beforeText || '',
-    入力後テキスト: logData.afterText || '',
-
     発生時刻: currentTime.toISOString(),
-    経過時間_ms: getElapsedTimeMs(),
     経過時間_秒: getElapsedTimeSec(),
     画面幅: screenSize.width,
     画面高さ: screenSize.height,
-    使用端末ブラウザ情報: getDeviceInfo(),
   }
 }
 
