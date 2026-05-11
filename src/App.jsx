@@ -4,7 +4,7 @@ import SubjectNameInput from './components/SubjectNameInput'
 import iconBack from '../material/icon_back.png'
 import iconHome from '../material/icon_home.png'
 import iconSend from '../material/icon_send.png'
-import iconSendWhite from "../material/icon_send_white.png";
+import iconSendWhite from '../material/icon_send_white.png'
 import iconMute from '../material/icon_mute.png'
 import iconMic from '../material/icon_mic.png'
 import iconCheckBlack from '../material/icon_check_black.png'
@@ -210,10 +210,10 @@ function InputComposer({
       className={`send-button ${isSent ? 'is-sent' : ''}`}
       onClick={onSend}
     >     
-        <img
-          src={isSent ? iconSendWhite : iconSend}
-          alt="送信"
-        />
+            <img
+      src={isSent ? iconSendWhite : iconSend}
+      alt="送信"
+    />
     </button>
   </div>
 )
@@ -334,6 +334,13 @@ const recordLog = (
   }
 
   const navigateTo = (screenName) => {
+    if (screenName === 'practice_text_1') {
+  setPracticeTextSent(false)
+}
+
+if (screenName === 'input_text_1') {
+  setInputTextSent(false)
+}
     if (screenName === 'practice_sound_1') {
       setIsPracticeMicActive(false)
     }
@@ -494,35 +501,41 @@ const recordLog = (
   }
 
   const handlePracticeTextSend = () => {
-    setPracticeTextSent(true)
-    setPracticeTextValue('')
+  const sentText = practiceTextValue
+
   recordLog(
     '送信時全文ログ',
     'practice_text_1',
     '送信',
     '',
     {
-      inputChar: practiceTextValue,
+      inputChar: sentText,
     }
   )
 
   recordLog('送信ボタン押下', 'practice_text_1', '送信')
+
+  setPracticeTextSent(true)
+  setPracticeTextValue('')
 }
 
   const handleInputTextSend = () => {
-    setInputTextSent(true)
-    setInputTextValue('')
+  const sentText = inputTextValue
+
   recordLog(
     '送信時全文ログ',
     'input_text_1',
     '送信',
     '',
     {
-      inputChar: inputTextValue,
+      inputChar: sentText,
     }
   )
 
   recordLog('送信ボタン押下', 'input_text_1', '送信')
+
+  setInputTextSent(true)
+  setInputTextValue('')
 }
 
   const handlePracticeTextBoxClick = () => {
