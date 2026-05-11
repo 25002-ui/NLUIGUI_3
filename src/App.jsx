@@ -550,33 +550,33 @@ const recordLog = (
         )
 
       case 'practice_text_2':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.practice_text_2}
-            description="以下の文章をテキスト入力してください。"
-            image={practiceTextImage}
-            imageAlt="練習テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            className="compose-screen"
-            footer={
-            <InputComposer
-              value={practiceTextValue}
-              onChange={setPracticeTextValue}
-              onSend={handlePracticeTextSend}
-              onTextInputLog={(data) =>
-                recordLog(
-                  '文字入力',
-                  'practice_text_2',
-                  'テキストボックス',
-                  data.afterText,
-                  data
-                )
-              }
-            />
+  return (
+    <PromptScreen
+      title={SCREEN_TITLES.practice_text_2}
+      description="以下の文章をテキスト入力してください。"
+      image={practiceTextImage}
+      imageAlt="練習テキスト入力の説明"
+      onBack={goBack}
+      onHome={goHome}
+      className="compose-screen"
+      footer={
+        <InputComposer
+          value={practiceTextValue}
+          onChange={setPracticeTextValue}
+          onSend={handlePracticeTextSend}
+          onTextInputLog={(data) =>
+            recordLog(
+              '文字入力',
+              'practice_text_2',
+              'テキストボックス',
+              data.afterText,
+              data
+            )
           }
-          />
-          )
+        />
+      }
+    />
+  )
 
       case 'input_text_1':
         return (
@@ -592,33 +592,33 @@ const recordLog = (
         )
 
       case 'input_text_2':
-        return (
-          <PromptScreen
-            title={SCREEN_TITLES.input_text_2}
-            description="以下の文章をテキスト入力してください。"
-            image={inputTextImage}
-            imageAlt="テキスト入力の説明"
-            onBack={goBack}
-            onHome={goHome}
-            className="compose-screen"
-            footer={
-              <InputComposer
-                value={inputTextValue}
-                onChange={setInputTextValue}
-                onSend={handleInputTextSend}
-                onTextInputLog={(data) =>
-                  recordLog(
-                    '文字入力',
-                    'input_text_2',
-                    'テキストボックス',
-                    data.afterText,
-                    data
-                )
-              }
-            />
+  return (
+    <PromptScreen
+      title={SCREEN_TITLES.input_text_2}
+      description="以下の文章をテキスト入力してください。"
+      image={inputTextImage}
+      imageAlt="テキスト入力の説明"
+      onBack={goBack}
+      onHome={goHome}
+      className="compose-screen"
+      footer={
+        <InputComposer
+          value={inputTextValue}
+          onChange={setInputTextValue}
+          onSend={handleInputTextSend}
+          onTextInputLog={(data) =>
+            recordLog(
+              '文字入力',
+              'input_text_2',
+              'テキストボックス',
+              data.afterText,
+              data
+            )
           }
-          />
-          )
+        />
+      }
+    />
+  )
 
       case 'practice_sound_1':
         return (
