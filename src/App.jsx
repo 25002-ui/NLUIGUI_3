@@ -540,11 +540,18 @@ const recordLog = (
             onHome={goHome}
             className="compose-screen"
             footer={
-              <InputComposer
-                value={practiceTextValue}
-                onChange={setPracticeTextValue}
-                onSend={handlePracticeTextSend}
-              />
+            <InputComposer
+              value={practiceTextValue}
+              onChange={setPracticeTextValue}
+              onSend={handlePracticeTextSend}
+              onTextInputLog={(data) =>
+              recordLog(
+                '文字入力',
+                'practice_text_2',
+                'テキストボックス',
+                data.afterText,
+                data
+              )
             }
           />
         )
@@ -577,9 +584,16 @@ const recordLog = (
                 value={inputTextValue}
                 onChange={setInputTextValue}
                 onSend={handleInputTextSend}
+                onTextInputLog={(data) =>
+                  recordLog(
+                    '文字入力',
+                    'input_text_2',
+                    'テキストボックス',
+                    data.afterText,
+                    data
+                  )
+                }
               />
-            }
-          />
         )
 
       case 'practice_sound_1':
