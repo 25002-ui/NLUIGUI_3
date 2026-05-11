@@ -188,17 +188,16 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
   return (
   <div className="bottom-input-row">
     <textarea
-      className="bottom-input-field"
-      value={value}
-      rows={1}
-      placeholder="文章を入力"
-      onChange={handleChange}
-      onInput={(event) => {
-        event.currentTarget.style.height = 'auto'
-        event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
-      }}
-      onFocus={handleFocus}
-    />
+  className="bottom-input-field"
+  value={value}
+  rows={1}
+  placeholder="文章を入力"
+  onChange={handleChange}
+  onInput={(event) => {
+    event.currentTarget.style.height = 'auto'
+    event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
+  }}
+/>
     <button type="button" className="send-button" onClick={onSend}>
       <img src={iconSend} alt="送信" />
     </button>
