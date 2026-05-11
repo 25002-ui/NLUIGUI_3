@@ -267,6 +267,8 @@ function App() {
   const [screenHistory, setScreenHistory] = useState([])
   const [practiceTextValue, setPracticeTextValue] = useState('')
   const [inputTextValue, setInputTextValue] = useState('')
+  const [practiceTextSent, setPracticeTextSent] = useState(false)
+  const [inputTextSent, setInputTextSent] = useState(false)
   const [isPracticeMicActive, setIsPracticeMicActive] = useState(false)
   const [isInputMicActive, setIsInputMicActive] = useState(false)
   const [isOutputTextChecked, setIsOutputTextChecked] = useState(false)
@@ -478,6 +480,7 @@ const recordLog = (
   }
 
   const handlePracticeTextSend = () => {
+    setPracticeTextSent(true)
   recordLog(
     '送信時全文ログ',
     'practice_text_1',
@@ -492,6 +495,7 @@ const recordLog = (
 }
 
   const handleInputTextSend = () => {
+    setInputTextSent(true)
   recordLog(
     '送信時全文ログ',
     'input_text_1',
@@ -571,6 +575,7 @@ const recordLog = (
           value={practiceTextValue}
           onChange={setPracticeTextValue}
           onSend={handlePracticeTextSend}
+          isSent={practiceTextSent}
           onTextInputLog={(data) =>
             recordLog(
               '文字入力',
@@ -600,6 +605,7 @@ const recordLog = (
           value={inputTextValue}
           onChange={setInputTextValue}
           onSend={handleInputTextSend}
+          isSent={inputTextSent}
           onTextInputLog={(data) =>
             recordLog(
               '文字入力',
