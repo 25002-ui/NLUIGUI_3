@@ -54,10 +54,13 @@ function createLogEntry(logData) {
     操作名: logData.actionName || '',
     ボタン名: logData.buttonName || '',
     入力テキスト: logData.inputText || '',
+
     入力文字: logData.inputChar || '',
     入力種別: logData.inputType || '',
     文字位置: logData.charIndex ?? '',
+    入力前テキスト: logData.beforeText || '',
     入力後テキスト: logData.afterText || '',
+
     発生時刻: currentTime.toISOString(),
     経過時間_ms: getElapsedTimeMs(),
     経過時間_秒: getElapsedTimeSec(),
@@ -129,26 +132,25 @@ export function clearAllLogs() {
  * ログをCSV形式に変換する（BOM付き）
  */
 export function convertLogsToCSV(logs) {
-    const headers = [
+const headers = [
   'ID',
   '被験者名',
   '画面名',
   '操作名',
   'ボタン名',
   '入力テキスト',
-
   '入力文字',
   '入力種別',
   '文字位置',
+  '入力前テキスト',
   '入力後テキスト',
-
   '発生時刻',
   '経過時間_ms',
   '経過時間_秒',
   '画面幅',
   '画面高さ',
   '使用端末'
-  ]
+]
   
   const escapeCSV = (field) => {
     const str = String(field)
@@ -165,13 +167,11 @@ const rows = logs.map(log => [
   log.操作名,
   log.ボタン名,
   log.入力テキスト,
-
-  // 追加
   log.入力文字,
   log.入力種別,
   log.文字位置,
+  log.入力前テキスト,
   log.入力後テキスト,
-
   log.発生時刻,
   log.経過時間_ms,
   log.経過時間_秒,
