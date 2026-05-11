@@ -472,18 +472,34 @@ const recordLog = (
   }
 
   const handlePracticeTextSend = () => {
-    // practice_text_2 送信ボタン押下をログに記録
-    recordLog('送信ボタン押下', 'practice_text_2', '送信', practiceTextValue)
-    setPracticeTextValue('')
-    goBack()
-  }
+  recordLog(
+    '送信時全文ログ',
+    'practice_text_2',
+    '送信',
+    '',
+    {
+      inputChar: practiceTextValue,
+    }
+  )
+
+  recordLog('送信ボタン押下', 'practice_text_2', '送信')
+  navigateTo('practice_text_1')
+}
 
   const handleInputTextSend = () => {
-    // input_text_2 送信ボタン押下をログに記録
-    recordLog('送信ボタン押下', 'input_text_2', '送信', inputTextValue)
-    setInputTextValue('')
-    goBack()
-  }
+  recordLog(
+    '送信時全文ログ',
+    'input_text_2',
+    '送信',
+    '',
+    {
+      inputChar: inputTextValue,
+    }
+  )
+
+  recordLog('送信ボタン押下', 'input_text_2', '送信')
+  navigateTo('input_text_1')
+}
 
   const handlePracticeTextBoxClick = () => {
     // practice_text_1 テキストボックス押下をログに記録
