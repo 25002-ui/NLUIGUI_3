@@ -109,8 +109,11 @@ function InputLauncher({ onClick }) {
 }
 
 function InputComposer({ value, onChange, onSend, onTextInputLog }) {
-  const isComposingRef = useRef(false)
-  const compositionStartValueRef = useRef('')
+  const previousValueRef = useRef(value)
+
+  useEffect(() => {
+    previousValueRef.current = value
+  }, [value])
 
   const handleFocus = () => {
     window.requestAnimationFrame(() => {
@@ -124,6 +127,7 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
     }
 
     let start = 0
+
     while (
       start < beforeText.length &&
       start < afterText.length &&
@@ -151,20 +155,17 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
       Array.from(addedText).forEach((char, index) => {
         onTextInputLog({
           inputChar: char,
-          inputType,
+          inputType: inputType || 'insertText',
           charIndex: start + index,
           beforeText,
           afterText,
         })
       })
-      return
-    }
-
-    if (removedText) {
+    } else if (removedText) {
       Array.from(removedText).forEach((char, index) => {
         onTextInputLog({
           inputChar: char,
-          inputType: 'deleteContent',
+          inputType: inputType || 'deleteContent',
           charIndex: start + index,
           beforeText,
           afterText,
@@ -175,28 +176,13 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
 
   const handleChange = (event) => {
     const nextValue = event.target.value
+    const beforeValue = previousValueRef.current
+    const inputType = event.nativeEvent?.inputType || 'textChange'
 
-    if (!isComposingRef.current) {
-      logTextDiff(value, nextValue, 'insertText')
-    }
+    logTextDiff(beforeValue, nextValue, inputType)
 
+    previousValueRef.current = nextValue
     onChange(nextValue)
-  }
-
-  const handleCompositionStart = () => {
-    isComposingRef.current = true
-    compositionStartValueRef.current = value
-  }
-
-  const handleCompositionEnd = (event) => {
-    isComposingRef.current = false
-    const nextValue = event.target.value
-
-    logTextDiff(
-      compositionStartValueRef.current,
-      nextValue,
-      'insertCompositionText'
-    )
   }
 
   return (
@@ -204,8 +190,6 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
       <textarea
         value={value}
         onChange={handleChange}
-        onCompositionStart={handleCompositionStart}
-        onCompositionEnd={handleCompositionEnd}
         onFocus={handleFocus}
       />
       <button type="button" className="send-button" onClick={onSend}>
