@@ -108,25 +108,71 @@ function InputLauncher({ onClick }) {
   )
 }
 
-function InputComposer({ value, onChange, onSend }) {
+function InputComposer({ value, onChange, onSend, onTextInputLog }) {
+  const isComposingRef = useRef(false)
+
   const handleFocus = () => {
     window.requestAnimationFrame(() => {
       window.scrollTo(0, 0)
     })
   }
 
+  const logInsertedText = (text, inputType, target) => {
+    if (!text || !onTextInputLog) {
+      return
+    }
+
+    const chars = Array.from(text)
+    const endPosition = target.selectionStart ?? target.value.length
+    const startPosition = Math.max(0, endPosition - chars.length)
+
+    chars.forEach((char, index) => {
+      onTextInputLog({
+        inputChar: char,
+        inputType,
+        charIndex: startPosition + index,
+        afterText: target.value,
+      })
+    })
+  }
+
+  const handleInput = (event) => {
+    const nativeEvent = event.nativeEvent
+
+    if (isComposingRef.current) {
+      return
+    }
+
+    if (
+      nativeEvent.inputType &&
+      nativeEvent.inputType.startsWith('insert') &&
+      nativeEvent.data
+    ) {
+      logInsertedText(nativeEvent.data, nativeEvent.inputType, event.target)
+    }
+  }
+
+  const handleCompositionStart = () => {
+    isComposingRef.current = true
+  }
+
+  const handleCompositionEnd = (event) => {
+    isComposingRef.current = false
+    logInsertedText(event.nativeEvent.data, 'insertCompositionText', event.target)
+  }
+
   return (
-    <div className="bottom-input-row">
-      <input
-        className="bottom-input-field"
-        type="text"
-        placeholder="文章を入力"
+    <div className="input-composer">
+      <textarea
         value={value}
         onChange={(event) => onChange(event.target.value)}
+        onInput={handleInput}
+        onCompositionStart={handleCompositionStart}
+        onCompositionEnd={handleCompositionEnd}
         onFocus={handleFocus}
       />
-      <button className="send-button" type="button" onClick={onSend} aria-label="送信">
-        <img src={iconSend} alt="" />
+      <button type="button" className="send-button" onClick={onSend}>
+        <img src={iconSend} alt="送信" />
       </button>
     </div>
   )
@@ -203,19 +249,26 @@ function App() {
   const outputSoundAudioRef = useRef(null)
 
   // ログを記録するヘルパー関数
-  const recordLog = (actionName, screenName = currentScreen, buttonName = '', inputText = '') => {
-    if (isTestMode) {
-      return // テストモード中はログを記録しない
-    }
-
-    addLog({
-      subjectName,
-      screenName,
-      actionName,
-      buttonName,
-      inputText,
-    })
+const recordLog = (
+  actionName,
+  screenName = currentScreen,
+  buttonName = '',
+  inputText = '',
+  extraData = {}
+) => {
+  if (isTestMode) {
+    return
   }
+
+  addLog({
+    subjectName,
+    screenName,
+    actionName,
+    buttonName,
+    inputText,
+    ...extraData,
+  })
+}
 
   const handleStartExperiment = (name) => {
     setSubjectName(name)
