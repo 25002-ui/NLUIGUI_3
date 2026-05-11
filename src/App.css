@@ -322,16 +322,21 @@ body, html, #root {
 }
 
 .compose-text-entry .send-button {
-  width: clamp(1.9rem, 6.2vw, 2.25rem);
-  height: clamp(1.9rem, 6.2vw, 2.25rem);
+  width: clamp(2.15rem, 6.8vw, 2.55rem);
+  height: clamp(2.15rem, 6.8vw, 2.55rem);
   border: 0;
+  border-radius: 999px;
   background: transparent;
-  padding: 0;
+  padding: clamp(0.18rem, 0.7vw, 0.26rem);
   display: grid;
   place-items: center;
   align-self: center;
   cursor: pointer;
   flex: 0 0 auto;
+}
+
+.compose-text-entry .send-button.is-sent {
+  background: #FA6400;
 }
 
 .compose-text-entry .send-button img {
