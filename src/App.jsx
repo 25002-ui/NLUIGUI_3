@@ -4,7 +4,7 @@ import SubjectNameInput from './components/SubjectNameInput'
 import iconBack from '../material/icon_back.png'
 import iconHome from '../material/icon_home.png'
 import iconSend from '../material/icon_send.png'
-import iconSendWhite from './material/icon_send_white.png'
+import iconSendWhite from "../material/icon_send_white.png";
 import iconMute from '../material/icon_mute.png'
 import iconMic from '../material/icon_mic.png'
 import iconCheckBlack from '../material/icon_check_black.png'
