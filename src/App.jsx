@@ -108,7 +108,13 @@ function InputLauncher({ onClick }) {
   )
 }
 
-function InputComposer({ value, onChange, onSend, onTextInputLog }) {
+function InputComposer({
+  value,
+  onChange,
+  onSend,
+  onTextInputLog,
+  isSent = false,
+}) {
   const previousValueRef = useRef(value)
 
   useEffect(() => {
@@ -198,7 +204,11 @@ function InputComposer({ value, onChange, onSend, onTextInputLog }) {
     event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
   }}
 />
-    <button type="button" className="send-button" onClick={onSend}>
+    <button
+      type="button"
+      className={`send-button ${isSent ? 'is-sent' : ''}`}
+      onClick={onSend}
+    >     
       <img src={iconSend} alt="送信" />
     </button>
   </div>
