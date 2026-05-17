@@ -64,74 +64,66 @@
   word-break: break-word;
 }
 
-/* 練習テキスト入力・練習音声入力の新背景色 */
+/* 1. 新設：練習テキスト入力・練習音声入力（指定色: #FFEEE2） */
 .practice-button {
-  background-color: #FFEEE2;
+  background-color: #FFEEE2 !important;
   color: #333;
 }
-
 .practice-button:active {
-  background-color: #fdded0;
+  background-color: #fdded0 !important;
 }
 
+/* 2. テキスト入力・音声入力 */
 .peach-button {
   background-color: #e8cfc8;
   color: #333;
 }
-
 .peach-button:active {
   background-color: #ddc0b5;
 }
 
-/* Blue color for output and check buttons */
-.blue-button {
-  background-color: #b8d4f1;
-  color: #333;
-}
-
-.blue-button:active {
-  background-color: #a0c5e8;
-}
-
-/* 音声チェックボタンの新背景色と配置調整 */
+/* 3. 新設：音声チェック（指定色: #EBF4FF ＋ 単独列配置） */
 .check-button {
-  grid-column: 1 / -1;       /* 2列分を丸ごと占有し、専用の列（行）にする */
-  background-color: #EBF4FF; /* 新しい背景色 */
+  grid-column: 1 / -1;       /* 2列分の領域を1つで占有し、専用の列にする */
+  background-color: #EBF4FF !important;
   color: #333;
-  width: 50%;                /* Home.pngで横いっぱいの場合はここを 100% に変更してください */
-  margin: 0 auto;
+  width: 100%;               /* 100%幅で横長ボタンにします。50%で中央寄せにしたい場合はここを 50% にし、margin: 0 auto; を足してください */
   aspect-ratio: auto;
   min-height: 100px;
   height: auto;
   padding: 20px;
 }
-
 .check-button:active {
-  background-color: #d2e5ff;
+  background-color: #d2e5ff !important;
 }
 
-/* Responsive design for larger screens */
+/* 4. テキスト出力・音声出力 */
+.blue-button {
+  background-color: #b8d4f1;
+  color: #333;
+}
+.blue-button:active {
+  background-color: #a0c5e8;
+}
+
+/* --- レポンシブ対応 --- */
 @media (min-width: 431px) {
   .home-wrapper {
     max-width: 430px;
   }
 }
 
-/* Responsive design for smaller screens */
 @media (max-width: 380px) {
   .home-wrapper {
     padding: 30px 16px;
   }
-
   .home-title {
     font-size: 28px;
     margin-bottom: 40px;
   }
-
   .buttons-grid {
     gap: 12px;
   }
-
   .home-button {
     font-size: 14px;
     border-radius: 12px;
