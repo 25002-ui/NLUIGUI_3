@@ -7,7 +7,7 @@ export default function Home({ navigateTo }) {
         <h1 className="home-title">Home</h1>
         
         <div className="buttons-grid">
-          {/* Row 1: 練習テキスト入力、練習音声入力 */}
+          {/* Row 1: 練習系（背景色: #FFEEE2） */}
           <button className="home-button practice-button" onClick={() => navigateTo('practice_text_1')}>
             <span className="button-text">練習<br />テキスト入力</span>
           </button>
@@ -15,7 +15,7 @@ export default function Home({ navigateTo }) {
             <span className="button-text">練習<br />音声入力</span>
           </button>
 
-          {/* Row 2: テキスト入力、音声入力 */}
+          {/* Row 2: 通常インプット系 */}
           <button className="home-button peach-button" onClick={() => navigateTo('input_text_1')}>
             <span className="button-text">テキスト入力</span>
           </button>
@@ -23,12 +23,12 @@ export default function Home({ navigateTo }) {
             <span className="button-text">音声入力</span>
           </button>
 
-          {/* Row 3: 音声チェック（単独配置） */}
+          {/* Row 3: 音声チェック（単独の行に配置 / 背景色: #EBF4FF） */}
           <button className="home-button check-button" onClick={() => navigateTo('soundcheck')}>
             <span className="button-text">音声チェック</span>
           </button>
 
-          {/* Row 4: テキスト出力、音声出力 */}
+          {/* Row 4: アウトプット系 */}
           <button className="home-button blue-button" onClick={() => navigateTo('output_text_1')}>
             <span className="button-text">テキスト出力</span>
           </button>
