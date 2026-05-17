@@ -64,7 +64,16 @@
   word-break: break-word;
 }
 
-/* Peach/Beige color for practice and input buttons */
+/* 練習テキスト入力・練習音声入力の新背景色 */
+.practice-button {
+  background-color: #FFEEE2;
+  color: #333;
+}
+
+.practice-button:active {
+  background-color: #fdded0;
+}
+
 .peach-button {
   background-color: #e8cfc8;
   color: #333;
@@ -84,15 +93,21 @@
   background-color: #a0c5e8;
 }
 
-/* Center the check button */
+/* 音声チェックボタンの新背景色と配置調整 */
 .check-button {
-  grid-column: 1 / -1;
-  width: 50%;
+  grid-column: 1 / -1;       /* 2列分を丸ごと占有し、専用の列（行）にする */
+  background-color: #EBF4FF; /* 新しい背景色 */
+  color: #333;
+  width: 50%;                /* Home.pngで横いっぱいの場合はここを 100% に変更してください */
   margin: 0 auto;
   aspect-ratio: auto;
   min-height: 100px;
   height: auto;
   padding: 20px;
+}
+
+.check-button:active {
+  background-color: #d2e5ff;
 }
 
 /* Responsive design for larger screens */
