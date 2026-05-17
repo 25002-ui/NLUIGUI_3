@@ -64,31 +64,31 @@
   word-break: break-word;
 }
 
-/* 1. 新設：練習テキスト入力・練習音声入力（指定色: #FFEEE2） */
+/* 1. 練習テキスト・練習音声ボタン（指定色：#FFEEE2） */
 .practice-button {
   background-color: #FFEEE2 !important;
-  color: #333;
+  color: #333 !important;
 }
 .practice-button:active {
   background-color: #fdded0 !important;
 }
 
-/* 2. テキスト入力・音声入力 */
+/* 2. 通常テキスト・通常音声ボタン */
 .peach-button {
-  background-color: #e8cfc8;
-  color: #333;
+  background-color: #e8cfc8 !important;
+  color: #333 !important;
 }
 .peach-button:active {
-  background-color: #ddc0b5;
+  background-color: #ddc0b5 !important;
 }
 
-/* 3. 新設：音声チェック（指定色: #EBF4FF ＋ 単独列配置） */
+/* 3. 音声チェックボタン（指定色：#EBF4FF ＋ 2列を丸ごと独占して独立行にする） */
 .check-button {
-  grid-column: 1 / -1;       /* 2列分の領域を1つで占有し、専用の列にする */
+  grid-column: 1 / -1 !important; /* 横に2つ並ぶグリッドの左端から右端までぶち抜く指定 */
   background-color: #EBF4FF !important;
-  color: #333;
-  width: 100%;               /* 100%幅で横長ボタンにします。50%で中央寄せにしたい場合はここを 50% にし、margin: 0 auto; を足してください */
-  aspect-ratio: auto;
+  color: #333 !important;
+  width: 100% !important;         /* 1列を確実に埋め尽くす幅 */
+  aspect-ratio: auto !important;   /* 正方形制限を解除し、横長の綺麗な長方形にする */
   min-height: 100px;
   height: auto;
   padding: 20px;
@@ -97,16 +97,16 @@
   background-color: #d2e5ff !important;
 }
 
-/* 4. テキスト出力・音声出力 */
+/* 4. 出力系ボタン */
 .blue-button {
-  background-color: #b8d4f1;
-  color: #333;
+  background-color: #b8d4f1 !important;
+  color: #333 !important;
 }
 .blue-button:active {
-  background-color: #a0c5e8;
+  background-color: #a0c5e8 !important;
 }
 
-/* --- レポンシブ対応 --- */
+/* レスポンシブ */
 @media (min-width: 431px) {
   .home-wrapper {
     max-width: 430px;
