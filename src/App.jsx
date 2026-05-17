@@ -19,17 +19,20 @@ import outputSoundAudioFile from '../material/output_sound.mp3'
 import { addLog } from './utils/logger'
 
 const HOME_BUTTONS = [
-  { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'peach' },
-  { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'peach' },
+  { key: 'practice_text_1', label: ['練習', 'テキスト入力'], tone: 'practice' },
+  { key: 'practice_sound_1', label: ['練習', '音声入力'], tone: 'practice' },
+
   { key: 'input_text_1', label: ['テキスト入力'], tone: 'peach', singleLine: true },
   { key: 'input_sound_1', label: ['音声入力'], tone: 'peach', singleLine: true },
+
   {
     key: 'soundcheck',
     label: ['音声チェック'],
-    tone: 'blue',
-    spacerBefore: true,
+    tone: 'soundcheck',
     singleLine: true,
+    rightColumnOnly: true,
   },
+
   { key: 'output_text_1', label: ['テキスト出力'], tone: 'blue', singleLine: true },
   { key: 'output_sound_1', label: ['音声出力'], tone: 'blue', singleLine: true },
 ]
@@ -71,17 +74,25 @@ function ScreenLayout({ title, onBack, onHome, children, className = '' }) {
 
 function HomeScreen({ onNavigate }) {
   return (
-    <div className="screen-shell home-screen">
+    <ScreenLayout title="Home" className="home-screen">
       <h1 className="home-title">Home</h1>
+
       <div className="home-grid">
         {HOME_BUTTONS.map((button) => (
           <button
             key={button.key}
-            className={`home-card home-card-${button.tone} ${button.spacerBefore ? 'home-card-offset' : ''}`}
+            className={[
+              'home-card',
+              `home-card-${button.tone}`,
+              button.singleLine ? 'home-card-single' : '',
+              button.rightColumnOnly ? 'home-card-right-column' : '',
+            ]
+              .filter(Boolean)
+              .join(' ')}
             type="button"
             onClick={() => onNavigate(button.key)}
           >
-            <span className={`home-card-label ${button.singleLine ? 'home-card-label-single' : ''}`.trim()}>
+            <span className="home-card-label">
               {button.label.map((line) => (
                 <span key={line}>{line}</span>
               ))}
@@ -89,7 +100,7 @@ function HomeScreen({ onNavigate }) {
           </button>
         ))}
       </div>
-    </div>
+    </ScreenLayout>
   )
 }
 
