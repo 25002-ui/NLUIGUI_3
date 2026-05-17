@@ -128,6 +128,7 @@ function InputComposer({
   isSent = false,
 }) {
   const previousValueRef = useRef(value)
+  const textareaRef = useRef(null)
 
   useEffect(() => {
     previousValueRef.current = value
@@ -203,31 +204,35 @@ function InputComposer({
     onChange(nextValue)
   }
 
+  const handleSend = () => {
+    const currentText = textareaRef.current?.value ?? value
+    onSend(currentText)
+  }
+
   return (
-  <div className="bottom-input-row">
-    <textarea
-  className="bottom-input-field"
-  value={value}
-  rows={1}
-  placeholder="文章を入力"
-  onChange={handleChange}
-  onInput={(event) => {
-    event.currentTarget.style.height = 'auto'
-    event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
-  }}
-/>
-    <button
-      type="button"
-      className={`send-button ${isSent ? 'is-sent' : ''}`}
-      onClick={onSend}
-    >     
-            <img
-      src={isSent ? iconSendWhite : iconSend}
-      alt="送信"
-    />
-    </button>
-  </div>
-)
+    <div className="input-composer">
+      <textarea
+        ref={textareaRef}
+        className="input-textarea"
+        value={value}
+        onChange={handleChange}
+        onFocus={handleFocus}
+        rows={1}
+        onInput={(event) => {
+          event.currentTarget.style.height = 'auto'
+          event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
+        }}
+      />
+
+      <button
+        type="button"
+        className={`send-button ${isSent ? 'is-sent' : ''}`}
+        onClick={handleSend}
+      >
+        <img src={isSent ? iconSendWhite : iconSend} alt="送信" />
+      </button>
+    </div>
+  )
 }
 
 function RoundActionButton({ icon, alt, backgroundColor, onClick }) {
@@ -530,20 +535,28 @@ if (screenName === 'input_text_1') {
   setPracticeTextValue('')
 }
 
-  const handleInputTextSend = () => {
-  const sentText = inputTextValue
+  const handleInputTextSend = (sentTextFromTextarea = '') => {
+  const sentText = sentTextFromTextarea
 
   recordLog(
     '送信時全文ログ',
     'input_text_1',
     '送信',
-    '',
+    sentText,
     {
       inputChar: sentText,
     }
   )
 
-  recordLog('送信ボタン押下', 'input_text_1', '送信')
+  recordLog(
+    '送信ボタン押下',
+    'input_text_1',
+    '送信',
+    sentText,
+    {
+      inputChar: sentText,
+    }
+  )
 
   setInputTextSent(true)
   setInputTextValue('')
