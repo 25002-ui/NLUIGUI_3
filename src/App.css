@@ -345,3 +345,35 @@ body, html, #root {
   object-fit: contain;
   display: block;
 }
+
+/* App.css の中にすでにある .peach-button や .blue-button よりも優先させます */
+
+/* 1. 練習テキスト・練習音声ボタン（理想の色：#FFEEE2） */
+.practice-button {
+  background-color: #FFEEE2 !important;
+  color: #333 !important;
+}
+
+/* 2. 通常テキスト・通常音声ボタン */
+.peach-button {
+  background-color: #e8cfc8 !important;
+  color: #333 !important;
+}
+
+/* 3. 音声チェックボタン（理想の色：#EBF4FF ＋ 独立行配置） */
+.check-button {
+  grid-column: 1 / -1 !important; 
+  background-color: #EBF4FF !important;
+  color: #333 !important;
+  width: 100% !important;         
+  aspect-ratio: auto !important;   
+  min-height: 100px;
+  height: auto;
+  padding: 20px;
+}
+
+/* 4. 出力系ボタン */
+.blue-button {
+  background-color: #b8d4f1 !important;
+  color: #333 !important;
+}
