@@ -213,14 +213,18 @@ function InputComposer({
     <div className="input-composer">
       <textarea
         ref={textareaRef}
-        className="input-textarea"
-        value={value}
+        className={`input-textarea${isSent ? ' is-sent' : ''}`}
+        value={isSent ? '送信しました' : value}
         onChange={handleChange}
         onFocus={handleFocus}
+        placeholder="文章を入力"
+        readOnly={isSent}
         rows={1}
         onInput={(event) => {
-          event.currentTarget.style.height = 'auto'
-          event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
+          if (!isSent) {
+            event.currentTarget.style.height = 'auto'
+            event.currentTarget.style.height = `${event.currentTarget.scrollHeight}px`
+          }
         }}
       />
 
@@ -740,14 +744,7 @@ if (screenName === 'input_text_1') {
             body={null}
             onBack={goBack}
             onHome={goHome}
-            footer={
-              <RoundActionButton
-                icon={iconPlayWhite}
-                alt="音声チェック再生"
-                backgroundColor="#FA6400"
-                onClick={replaySoundcheck}
-              />
-            }
+            footer={null}
           />
         )
 
