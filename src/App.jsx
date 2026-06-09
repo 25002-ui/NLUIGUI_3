@@ -129,10 +129,16 @@ function InputComposer({
 }) {
   const previousValueRef = useRef(value)
   const textareaRef = useRef(null)
+  // 1～5文字目のうち、何文字目までログを取り終えたか（0=まだ１文字もログなし）
+  const loggedUpToRef = useRef(0)
 
   useEffect(() => {
     previousValueRef.current = value
-  }, [value])
+    // 送信後リセット時（isSent=false かつ value=''）にカウンタもリセット
+    if (!isSent && value === '') {
+      loggedUpToRef.current = 0
+    }
+  }, [value, isSent])
 
   const handleFocus = () => {
     window.requestAnimationFrame(() => {
@@ -140,68 +146,25 @@ function InputComposer({
     })
   }
 
-  const logTextDiff = (beforeText, afterText, inputType) => {
-    if (!onTextInputLog || beforeText === afterText) {
-      return
-    }
-
-    let start = 0
-
-    while (
-      start < beforeText.length &&
-      start < afterText.length &&
-      beforeText[start] === afterText[start]
-    ) {
-      start += 1
-    }
-
-    let beforeEnd = beforeText.length - 1
-    let afterEnd = afterText.length - 1
-
-    while (
-      beforeEnd >= start &&
-      afterEnd >= start &&
-      beforeText[beforeEnd] === afterText[afterEnd]
-    ) {
-      beforeEnd -= 1
-      afterEnd -= 1
-    }
-
-    const addedText = afterText.slice(start, afterEnd + 1)
-    const removedText = beforeText.slice(start, beforeEnd + 1)
-
-    if (addedText) {
-      Array.from(addedText).forEach((char, index) => {
-        onTextInputLog({
-          inputChar: char,
-          inputType: inputType || 'insertText',
-          charIndex: start + index,
-          beforeText,
-          afterText,
-        })
-      })
-    } else if (removedText) {
-      Array.from(removedText).forEach((char, index) => {
-        onTextInputLog({
-          inputChar: char,
-          inputType: inputType || 'deleteContent',
-          charIndex: start + index,
-          beforeText,
-          afterText,
-        })
-      })
-    }
-  }
-
   const handleChange = (event) => {
     const nextValue = event.target.value
-    const beforeValue = previousValueRef.current
-    const inputType = event.nativeEvent?.inputType || 'textChange'
-
-    logTextDiff(beforeValue, nextValue, inputType)
-
     previousValueRef.current = nextValue
     onChange(nextValue)
+
+    // 入力し始め：1～5文字目それぞれの入力時刻を個別にログ
+    if (onTextInputLog && nextValue.length <= 5) {
+      // 今回新たにログ対象になった文字だけを記録（貼り付け対応）
+      const newlyLogged = Math.min(nextValue.length, 5)
+      for (let i = loggedUpToRef.current; i < newlyLogged; i++) {
+        onTextInputLog({
+          inputType: '入力し始め',
+          charIndex: i + 1,
+          inputChar: nextValue[i],
+          inputText: nextValue.slice(0, i + 1),
+        })
+      }
+      loggedUpToRef.current = newlyLogged
+    }
   }
 
   const handleSend = () => {
@@ -635,11 +598,15 @@ if (screenName === 'input_text_1') {
           isSent={practiceTextSent}
           onTextInputLog={(data) =>
             recordLog(
-              '文字入力',
+              '入力し始め',
               'practice_text_1',
               'テキストボックス',
-              data.afterText,
-              data
+              data.inputText,
+              {
+                inputType: data.inputType,
+                inputChar: data.inputChar,
+                charIndex: data.charIndex,
+              }
             )
           }
         />
@@ -665,11 +632,15 @@ if (screenName === 'input_text_1') {
           isSent={inputTextSent}
           onTextInputLog={(data) =>
             recordLog(
-              '文字入力',
+              '入力し始め',
               'input_text_1',
               'テキストボックス',
-              data.afterText,
-              data
+              data.inputText,
+              {
+                inputType: data.inputType,
+                inputChar: data.inputChar,
+                charIndex: data.charIndex,
+              }
             )
           }
         />
