@@ -6,12 +6,8 @@ export default function OutputSound1({ navigateTo, goBack, goHome }) {
   const [isPlaying, setIsPlaying] = useState(false)
 
   const handlePlayClick = () => {
-    setIsPlaying(true)
-    // 再生が終わると、material/icon_play_black.png の再生ボタン、#F4F4F4の背景色に戻る
-    // 実装はまだ行わない（見た目だけ）
-    setTimeout(() => {
-      setIsPlaying(false)
-    }, 3000)
+    // ボタンを押すたびにオレンジ⇔白をトグル
+    setIsPlaying((prev) => !prev)
   }
 
   return (
